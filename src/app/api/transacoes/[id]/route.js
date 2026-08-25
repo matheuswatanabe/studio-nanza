@@ -68,7 +68,7 @@ export async function PUT(request, { params }) {
   `;
 
   const [transacao] = await sql`
-    SELECT transacoes.*, projetos.nome AS projeto_nome,
+    SELECT transacoes.*, projetos.nome AS projeto_nome, projetos.status AS projeto_status,
       COALESCE(clientes.empresa, clientes.nome) AS cliente_empresa
     FROM transacoes
     LEFT JOIN projetos ON projetos.id = transacoes.projeto_id

@@ -61,3 +61,8 @@ create table if not exists marca_assets (
 alter table clientes add column if not exists criado_por text;
 alter table projetos add column if not exists criado_por text;
 alter table transacoes add column if not exists criado_por text;
+
+-- Migração: identifica para qual funcionário (Natan, Lucas ou Matheus) uma
+-- transação de saída é o pagamento — usado nas contas a pagar geradas
+-- automaticamente ao lançar um projeto com pagamento à equipe.
+alter table transacoes add column if not exists funcionario text;

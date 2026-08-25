@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Avatar from "@/components/Avatar";
+import { PERFIS } from "@/lib/auth";
 
 const FORM_INICIAL = {
   descricao: "",
@@ -43,8 +44,13 @@ const MESES = [
 ];
 
 function statusReal(t) {
-  if (t.status_pagamento === "pendente" && t.data < hojeISO()) return "atrasado";
-  return t.status_pagamento;
+  if (t.status_pagamento !== "pendente") return t.status_pagamento;
+  // Enquanto o projeto vinculado não estiver "Finalizado", o pagamento fica
+  // como pendente — não faz sentido marcar como atrasado algo de um projeto
+  // ainda em andamento só porque a data de início já passou.
+  if (t.projeto_id && t.projeto_status !== "Finalizado") return "pendente";
+  if (t.data < hojeISO()) return "atrasado";
+  return "pendente";
 }
 
 const STATUS_ESTILO = {
@@ -193,6 +199,7 @@ export default function FinanceiroPage() {
   const [busca, setBusca] = useState("");
   const [filtroTipo, setFiltroTipo] = useState("todos");
   const [filtroStatus, setFiltroStatus] = useState("todos");
+  const [filtroFuncionario, setFiltroFuncionario] = useState("todos");
   const [filtroAno, setFiltroAno] = useState(() => hojeISO().slice(0, 4));
   const [filtroMes, setFiltroMes] = useState(() => hojeISO().slice(5, 7));
   const [dataInicio, setDataInicio] = useState("");
@@ -272,9 +279,11 @@ export default function FinanceiroPage() {
       const combinaTipo = filtroTipo === "todos" || t.tipo === filtroTipo;
       const combinaStatus =
         filtroStatus === "todos" || statusReal(t) === filtroStatus;
-      return combinaBusca && combinaTipo && combinaStatus;
+      const combinaFuncionario =
+        filtroFuncionario === "todos" || t.funcionario === filtroFuncionario;
+      return combinaBusca && combinaTipo && combinaStatus && combinaFuncionario;
     });
-  }, [transacoesDoPeriodo, busca, filtroTipo, filtroStatus]);
+  }, [transacoesDoPeriodo, busca, filtroTipo, filtroStatus, filtroFuncionario]);
 
   function limparFiltroPeriodo() {
     setFiltroAno("todos");
@@ -542,6 +551,18 @@ export default function FinanceiroPage() {
             <option value="pendente">Pendente</option>
             <option value="atrasado">Em Atraso</option>
           </select>
+          <select
+            value={filtroFuncionario}
+            onChange={(e) => setFiltroFuncionario(e.target.value)}
+            className="rounded-lg border border-neutral-300 px-3 py-2 text-sm text-neutral-900 outline-none focus:border-neutral-900"
+          >
+            <option value="todos">Todos os funcionários</option>
+            {PERFIS.map((perfil) => (
+              <option key={perfil} value={perfil}>
+                {perfil}
+              </option>
+            ))}
+          </select>
         </div>
       )}
 
@@ -606,11 +627,13 @@ export default function FinanceiroPage() {
                       <Avatar nome={t.criado_por} />
                     </div>
                     <p className="text-xs font-normal text-neutral-400">
-                      {t.projeto_nome
+                      {(t.projeto_nome
                         ? [t.projeto_nome, t.cliente_empresa]
-                            .filter(Boolean)
-                            .join(" · ")
-                        : t.categoria ?? ""}
+                        : [t.categoria]
+                      )
+                        .concat(t.funcionario ? [`Pagamento: ${t.funcionario}`] : [])
+                        .filter(Boolean)
+                        .join(" · ")}
                     </p>
                     {erroExclusao?.id === t.id && (
                       <p className="mt-1 text-xs font-normal text-red-600">

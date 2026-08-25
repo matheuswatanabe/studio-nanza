@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Avatar from "@/components/Avatar";
+import { PERFIS } from "@/lib/auth";
 
 const STATUS_COLUNAS = ["Briefing", "Em Andamento", "Revisão Externa", "Finalizado"];
 
@@ -42,6 +43,7 @@ const FORM_INICIAL = {
   prazo_entrega: "",
   observacoes: "",
   valor: "",
+  pagamentos: Object.fromEntries(PERFIS.map((p) => [p, ""])),
 };
 
 function formatarData(dataISO) {
@@ -68,7 +70,7 @@ function alternarServico(lista, servico) {
     : [...lista, servico];
 }
 
-function CamposBasicos({ form, setForm, clientes, mostrarValor = false }) {
+function CamposBasicos({ form, setForm, clientes, mostrarValor = false, mostrarPagamentos = false }) {
   return (
     <>
       <input
@@ -192,6 +194,41 @@ function CamposBasicos({ form, setForm, clientes, mostrarValor = false }) {
             Lança automaticamente uma conta a receber no Financeiro.
           </span>
         </label>
+      )}
+
+      {mostrarPagamentos && (
+        <div className="sm:col-span-2">
+          <span className="mb-1.5 block text-xs font-medium text-neutral-500">
+            Pagamento à equipe neste projeto (opcional)
+          </span>
+          <div className="grid grid-cols-1 gap-3 rounded-lg border border-neutral-200 p-3 sm:grid-cols-3">
+            {PERFIS.map((perfil) => (
+              <label
+                key={perfil}
+                className="flex flex-col gap-1 text-xs text-neutral-500"
+              >
+                {perfil}
+                <input
+                  type="number"
+                  step="0.01"
+                  min="0.01"
+                  placeholder="R$"
+                  value={form.pagamentos[perfil]}
+                  onChange={(e) =>
+                    setForm({
+                      ...form,
+                      pagamentos: { ...form.pagamentos, [perfil]: e.target.value },
+                    })
+                  }
+                  className="rounded-lg border border-neutral-300 px-3 py-2 text-sm text-neutral-900 outline-none focus:border-neutral-900"
+                />
+              </label>
+            ))}
+          </div>
+          <span className="mt-1 block font-normal normal-case text-neutral-400">
+            Lança automaticamente uma conta a pagar no Financeiro para cada valor preenchido.
+          </span>
+        </div>
       )}
     </>
   );
@@ -563,6 +600,7 @@ export default function ProjetosPage() {
             setForm={setForm}
             clientes={clientes}
             mostrarValor
+            mostrarPagamentos
           />
 
           {erro && <p className="sm:col-span-2 text-sm text-red-600">{erro}</p>}

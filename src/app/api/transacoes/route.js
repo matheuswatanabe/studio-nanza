@@ -4,7 +4,7 @@ import { perfilAtual } from "@/lib/perfil";
 
 export async function GET() {
   const transacoes = await sql`
-    SELECT transacoes.*, projetos.nome AS projeto_nome,
+    SELECT transacoes.*, projetos.nome AS projeto_nome, projetos.status AS projeto_status,
       COALESCE(clientes.empresa, clientes.nome) AS cliente_empresa
     FROM transacoes
     LEFT JOIN projetos ON projetos.id = transacoes.projeto_id
@@ -71,7 +71,7 @@ export async function POST(request) {
   `;
 
   const [transacao] = await sql`
-    SELECT transacoes.*, projetos.nome AS projeto_nome,
+    SELECT transacoes.*, projetos.nome AS projeto_nome, projetos.status AS projeto_status,
       COALESCE(clientes.empresa, clientes.nome) AS cliente_empresa
     FROM transacoes
     LEFT JOIN projetos ON projetos.id = transacoes.projeto_id

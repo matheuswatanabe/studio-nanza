@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { sql, STATUS_PROJETO, TIPOS_SERVICO, resolverOuCriarCliente } from "@/lib/db";
 import { perfilAtual } from "@/lib/perfil";
+import { PERFIS } from "@/lib/auth";
 
 export async function GET() {
   const projetos = await sql`
@@ -34,6 +35,13 @@ function validarCampos(body) {
   const observacoes = (body.observacoes ?? "").trim() || null;
   const valor = body.valor !== undefined && body.valor !== "" ? Number(body.valor) : null;
 
+  const pagamentosBody = body.pagamentos && typeof body.pagamentos === "object" ? body.pagamentos : {};
+  const pagamentos = {};
+  for (const perfil of PERFIS) {
+    const bruto = pagamentosBody[perfil];
+    pagamentos[perfil] = bruto !== undefined && bruto !== "" ? Number(bruto) : null;
+  }
+
   if (!nome) return { erro: "O nome do projeto é obrigatório." };
   if (!clienteId && !clienteEmpresa)
     return { erro: "Informe a empresa do cliente para o projeto." };
@@ -42,6 +50,12 @@ function validarCampos(body) {
     return { erro: "Tipo de serviço inválido." };
   if (valor !== null && (!Number.isFinite(valor) || valor <= 0))
     return { erro: "Informe um valor cobrado maior que zero, ou deixe em branco." };
+  for (const perfil of PERFIS) {
+    const v = pagamentos[perfil];
+    if (v !== null && (!Number.isFinite(v) || v <= 0)) {
+      return { erro: `Informe um valor de pagamento válido para ${perfil}, ou deixe em branco.` };
+    }
+  }
 
   return {
     valores: {
@@ -55,6 +69,7 @@ function validarCampos(body) {
       prazoEntrega,
       observacoes,
       valor,
+      pagamentos,
     },
   };
 }
@@ -92,12 +107,27 @@ export async function POST(request) {
     RETURNING *
   `;
 
+  const dataLancamento = valores.dataInicio ?? new Date().toISOString().slice(0, 10);
+
   if (valores.valor) {
     await sql`
       INSERT INTO transacoes (descricao, valor, tipo, projeto_id, status_pagamento, data, criado_por)
       VALUES (
         ${"Projeto: " + valores.nome}, ${valores.valor}, 'entrada', ${projetoCriado.id},
-        'pendente', ${valores.dataInicio ?? new Date().toISOString().slice(0, 10)}, ${criadoPor}
+        'pendente', ${dataLancamento}, ${criadoPor}
+      )
+    `;
+  }
+
+  for (const perfil of PERFIS) {
+    const valorPagamento = valores.pagamentos[perfil];
+    if (!valorPagamento) continue;
+
+    await sql`
+      INSERT INTO transacoes (descricao, valor, tipo, projeto_id, status_pagamento, data, criado_por, funcionario)
+      VALUES (
+        ${"Pagamento equipe (" + perfil + "): " + valores.nome}, ${valorPagamento}, 'saida', ${projetoCriado.id},
+        'pendente', ${dataLancamento}, ${criadoPor}, ${perfil}
       )
     `;
   }
