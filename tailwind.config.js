@@ -17,7 +17,11 @@ module.exports = {
         },
       },
       fontFamily: {
-        display: ["var(--font-display)", "serif"],
+        // Neue Montreal é paga e não está no Google Fonts — assim que os
+        // arquivos (.woff2) forem adicionados via @font-face em
+        // globals.css, o navegador passa a usá-la automaticamente, sem
+        // precisar mexer em nenhuma classe.
+        display: ['"Neue Montreal"', "var(--font-sans)", "sans-serif"],
         sans: ["var(--font-sans)", "sans-serif"],
       },
     },

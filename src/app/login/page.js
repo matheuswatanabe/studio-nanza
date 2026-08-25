@@ -2,8 +2,6 @@
 
 import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import Logomark from "@/components/Logomark";
-import IdentityOrb from "@/components/IdentityOrb";
 
 function LoginForm() {
   const router = useRouter();
@@ -36,92 +34,65 @@ function LoginForm() {
   }
 
   return (
-    <div className="flex min-h-screen w-full items-center justify-center bg-brand-paper p-4 sm:p-8">
-      <div
-        className="card-in grid w-full max-w-5xl grid-cols-1 gap-0 overflow-hidden rounded-[28px] bg-brand-ink shadow-[0_60px_120px_-40px_rgba(11,42,61,0.45)] lg:grid-cols-2"
-        style={{ minHeight: "580px" }}
-      >
-        <div className="flex flex-col justify-between p-8 sm:p-12">
-          <div
-            className="brand-panel-fade flex items-center gap-2.5"
-            style={{ "--fd": "0ms" }}
-          >
-            <Logomark tone="light" size={26} />
-            <span className="text-sm font-medium text-brand-paper">
-              Studio Nanza
-            </span>
-          </div>
+    <div className="flex min-h-screen w-full items-center bg-brand-paper px-6 sm:px-12 lg:px-24">
+      <div className="w-full max-w-xl">
+        <p
+          className="brand-panel-fade text-xs font-medium uppercase tracking-[0.3em] text-brand-ink/40"
+          style={{ "--fd": "0ms" }}
+        >
+          Studio Nanza
+        </p>
 
-          <div className="max-w-sm">
-            <p
-              className="brand-panel-fade text-[11px] font-medium uppercase tracking-[0.24em] text-brand-gold"
-              style={{ "--fd": "60ms" }}
-            >
-              Painel interno
+        <h1
+          className="brand-panel-fade mt-6 font-display text-[clamp(2.25rem,6vw,4.25rem)] font-medium leading-[1.05] tracking-tight text-brand-ink"
+          style={{ "--fd": "60ms" }}
+        >
+          Where ideas
+          <br />
+          become <em className="italic text-brand-ink/40">identity.</em>
+        </h1>
+
+        <form onSubmit={handleSubmit} className="mt-12 max-w-xs">
+          <label
+            className="brand-panel-fade block text-xs font-medium uppercase tracking-wide text-brand-ink/40"
+            style={{ "--fd": "120ms" }}
+          >
+            Senha
+          </label>
+          <input
+            type="password"
+            placeholder="Sua senha"
+            autoFocus
+            required
+            value={senha}
+            onChange={(e) => setSenha(e.target.value)}
+            className="brand-panel-fade mt-3 w-full border-b border-brand-ink/20 bg-transparent py-2 text-lg text-brand-ink outline-none transition placeholder:text-brand-ink/25 focus:border-brand-ink"
+            style={{ "--fd": "160ms" }}
+          />
+
+          {erro && (
+            <p className="mt-3 text-sm text-red-600" role="alert">
+              {erro}
             </p>
-            <h1
-              className="brand-panel-fade mt-3 font-display text-4xl font-medium italic leading-[1.15] text-brand-paper"
-              style={{ "--fd": "110ms" }}
-            >
-              Where ideas
-              <br />
-              become identity.
-            </h1>
+          )}
 
-            <form onSubmit={handleSubmit} className="mt-9">
-              <label
-                className="brand-panel-fade block text-[11px] font-medium uppercase tracking-wide text-brand-paper/45"
-                style={{ "--fd": "170ms" }}
-              >
-                Senha
-              </label>
-              <input
-                type="password"
-                placeholder="Sua senha"
-                autoFocus
-                required
-                value={senha}
-                onChange={(e) => setSenha(e.target.value)}
-                className="brand-panel-fade mt-2 w-full rounded-full border border-brand-paper/15 bg-brand-paper/[0.06] px-5 py-3 text-sm text-brand-paper outline-none transition placeholder:text-brand-paper/30 focus:border-brand-paper/40 focus:bg-brand-paper/10"
-                style={{ "--fd": "210ms" }}
-              />
-
-              {erro && (
-                <p className="mt-3 text-sm text-red-400" role="alert">
-                  {erro}
-                </p>
-              )}
-
-              <button
-                type="submit"
-                disabled={entrando}
-                className="brand-panel-fade mt-4 w-full rounded-full bg-brand-gold px-5 py-3 text-sm font-medium text-brand-ink-deep transition duration-150 hover:brightness-110 active:scale-[0.99] disabled:opacity-50"
-                style={{ "--fd": "250ms" }}
-              >
-                {entrando ? "Entrando..." : "Entrar"}
-              </button>
-
-              <p
-                className="brand-panel-fade mt-4 text-center text-xs text-brand-paper/35"
-                style={{ "--fd": "290ms" }}
-              >
-                Acesso restrito à equipe do Studio Nanza.
-              </p>
-            </form>
-          </div>
-
-          <div
-            className="brand-panel-fade inline-flex w-fit items-center gap-2 rounded-full border border-brand-paper/15 px-3 py-1.5 text-[11px] text-brand-paper/50"
-            style={{ "--fd": "330ms" }}
+          <button
+            type="submit"
+            disabled={entrando}
+            className="brand-panel-fade group mt-8 inline-flex items-center gap-2 border border-brand-ink px-5 py-2.5 text-sm font-medium text-brand-ink transition duration-150 hover:bg-brand-ink hover:text-brand-paper disabled:opacity-50"
+            style={{ "--fd": "200ms" }}
           >
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-            Sistema ativo
-          </div>
-        </div>
+            {entrando ? "Entrando..." : "Entrar"}
+            <span className="transition group-hover:translate-x-0.5">→</span>
+          </button>
+        </form>
 
-        <div className="hidden p-3 lg:block">
-          <IdentityOrb />
-        </div>
+        <p
+          className="brand-panel-fade mt-16 text-xs text-brand-ink/35"
+          style={{ "--fd": "240ms" }}
+        >
+          Acesso restrito à equipe do Studio Nanza.
+        </p>
       </div>
     </div>
   );
