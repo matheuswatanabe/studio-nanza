@@ -34,10 +34,10 @@ function LoginForm() {
   }
 
   return (
-    <div className="flex min-h-screen w-full items-center bg-brand-paper px-6 sm:px-12 lg:px-24">
+    <div className="flex min-h-screen w-full items-center justify-center bg-brand-paper-dim px-6">
       <div className="w-full max-w-xl">
         <p
-          className="brand-panel-fade text-xs font-medium uppercase tracking-[0.3em] text-brand-ink/40"
+          className="brand-panel-fade text-xs font-medium uppercase tracking-[0.3em] text-brand-ink/60"
           style={{ "--fd": "0ms" }}
         >
           Studio Nanza
@@ -49,12 +49,12 @@ function LoginForm() {
         >
           Where ideas
           <br />
-          become <em className="italic text-brand-ink/40">identity.</em>
+          become <em className="italic text-brand-ink/55">identity.</em>
         </h1>
 
         <form onSubmit={handleSubmit} className="mt-12 max-w-xs">
           <label
-            className="brand-panel-fade block text-xs font-medium uppercase tracking-wide text-brand-ink/40"
+            className="brand-panel-fade block text-xs font-medium uppercase tracking-wide text-brand-ink/55"
             style={{ "--fd": "120ms" }}
           >
             Senha
@@ -66,7 +66,7 @@ function LoginForm() {
             required
             value={senha}
             onChange={(e) => setSenha(e.target.value)}
-            className="brand-panel-fade mt-3 w-full border-b border-brand-ink/20 bg-transparent py-2 text-lg text-brand-ink outline-none transition placeholder:text-brand-ink/25 focus:border-brand-ink"
+            className="brand-panel-fade mt-3 w-full border-b-2 border-brand-ink/35 bg-transparent py-2 text-lg text-brand-ink outline-none transition placeholder:text-brand-ink/35 focus:border-brand-ink"
             style={{ "--fd": "160ms" }}
           />
 
@@ -79,7 +79,7 @@ function LoginForm() {
           <button
             type="submit"
             disabled={entrando}
-            className="brand-panel-fade group mt-8 inline-flex items-center gap-2 border border-brand-ink px-5 py-2.5 text-sm font-medium text-brand-ink transition duration-150 hover:bg-brand-ink hover:text-brand-paper disabled:opacity-50"
+            className="brand-panel-fade group mt-8 inline-flex items-center gap-2 border-2 border-brand-ink px-5 py-2.5 text-sm font-medium text-brand-ink transition duration-150 hover:bg-brand-ink hover:text-brand-paper disabled:opacity-50"
             style={{ "--fd": "200ms" }}
           >
             {entrando ? "Entrando..." : "Entrar"}
@@ -88,7 +88,7 @@ function LoginForm() {
         </form>
 
         <p
-          className="brand-panel-fade mt-16 text-xs text-brand-ink/35"
+          className="brand-panel-fade mt-16 text-xs text-brand-ink/50"
           style={{ "--fd": "240ms" }}
         >
           Acesso restrito à equipe do Studio Nanza.

@@ -32,10 +32,10 @@ function PerfilForm() {
   }
 
   return (
-    <div className="flex min-h-screen w-full items-center bg-brand-paper px-6 sm:px-12 lg:px-24">
+    <div className="flex min-h-screen w-full items-center justify-center bg-brand-paper-dim px-6">
       <div className="w-full max-w-xl">
         <p
-          className="brand-panel-fade text-xs font-medium uppercase tracking-[0.3em] text-brand-ink/40"
+          className="brand-panel-fade text-xs font-medium uppercase tracking-[0.3em] text-brand-ink/60"
           style={{ "--fd": "0ms" }}
         >
           Studio Nanza
@@ -45,11 +45,11 @@ function PerfilForm() {
           className="brand-panel-fade mt-6 font-display text-[clamp(2.25rem,6vw,4.25rem)] font-medium leading-[1.05] tracking-tight text-brand-ink"
           style={{ "--fd": "60ms" }}
         >
-          Quem é <em className="italic text-brand-ink/40">você?</em>
+          Quem é <em className="italic text-brand-ink/55">você?</em>
         </h1>
 
         <div
-          className="mt-12 max-w-xs border-t border-brand-ink/10"
+          className="mt-12 max-w-xs border-t border-brand-ink/25"
           role="group"
           aria-label="Selecione seu perfil"
         >
@@ -62,15 +62,15 @@ function PerfilForm() {
                 onClick={() => selecionar(perfil)}
                 disabled={selecionando !== null}
                 style={{ "--fd": `${120 + i * 50}ms` }}
-                className="brand-panel-fade group flex w-full items-center gap-4 border-b border-brand-ink/10 py-4 text-left transition disabled:pointer-events-none disabled:opacity-40"
+                className="brand-panel-fade group flex w-full items-center gap-4 border-b border-brand-ink/25 py-4 text-left transition disabled:pointer-events-none disabled:opacity-40"
               >
-                <span className="text-xs tabular-nums text-brand-ink/30">
+                <span className="text-xs tabular-nums text-brand-ink/45">
                   0{i + 1}
                 </span>
                 <span className="flex-1 text-lg font-medium text-brand-ink transition group-hover:translate-x-1">
                   {carregando ? "Entrando..." : perfil}
                 </span>
-                <span className="text-brand-ink/25 transition group-hover:translate-x-1 group-hover:text-brand-ink">
+                <span className="text-brand-ink/40 transition group-hover:translate-x-1 group-hover:text-brand-ink">
                   →
                 </span>
               </button>
@@ -85,7 +85,7 @@ function PerfilForm() {
         )}
 
         <p
-          className="brand-panel-fade mt-10 text-xs text-brand-ink/35"
+          className="brand-panel-fade mt-10 text-xs text-brand-ink/50"
           style={{ "--fd": "280ms" }}
         >
           Cada lançamento fica identificado com o perfil selecionado.
