@@ -1,0 +1,17 @@
+# Blueprint do Render.com para este projeto.
+# Como usar: no painel do Render, "New" -> "Blueprint", aponte para o seu
+# repositório do GitHub. O Render lê este arquivo e configura o serviço
+# automaticamente. Depois só falta preencher a variável DATABASE_URL (ela
+# não fica salva aqui por segurança — veja README/instruções de deploy).
+services:
+  - type: web
+    name: studio-gestao
+    runtime: node
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npm run start
+    envVars:
+      - key: NODE_VERSION
+        value: 20.18.0
+      - key: DATABASE_URL
+        sync: false

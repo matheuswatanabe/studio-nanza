@@ -1,0 +1,27 @@
+# Dependências e build
+node_modules/
+.next/
+out/
+
+# Banco de dados local antigo (SQLite) — mantido só como referência local,
+# não sobe pro Git. Os dados agora vivem no Supabase.
+database/*.sqlite
+database/*.db
+database/*.db-wal
+database/*.db-shm
+
+# Variáveis de ambiente — nunca commitar chaves reais.
+# .env.example fica de fora desta regra de propósito (é só um modelo).
+.env
+.env.local
+.env.*.local
+
+# Editor / SO
+.DS_Store
+*.pem
+
+# Configuração local de ferramentas de IA (Claude Code) — específica desta
+# máquina, não faz parte do projeto.
+.claude/
+.agents/
+skills-lock.json
