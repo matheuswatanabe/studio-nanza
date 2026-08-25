@@ -14,8 +14,8 @@ body {
 @media (prefers-reduced-motion: no-preference) {
   .logomark-animate .logomark-shape {
     opacity: 0;
-    transform: translateY(10px);
-    animation: logomark-in 620ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    transform: translateY(8px);
+    animation: logomark-in 420ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
     animation-delay: var(--d, 0ms);
   }
 
@@ -46,8 +46,42 @@ body {
 @media (prefers-reduced-motion: no-preference) {
   .brand-panel-fade {
     opacity: 0;
-    transform: translateY(8px);
-    animation: brand-panel-in 700ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    transform: translateY(6px);
+    animation: brand-panel-in 420ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation-delay: var(--fd, 0ms);
+  }
+
+  .card-in {
+    opacity: 0;
+    transform: translateY(14px) scale(0.985);
+    animation: card-in 480ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  .orb-in {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.9);
+    animation: orb-in 560ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation-delay: var(--fd, 0ms);
+  }
+
+  .hairline-x {
+    transform: scaleX(0);
+    transform-origin: center;
+    animation: line-in-x 380ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation-delay: var(--fd, 0ms);
+  }
+
+  .hairline-y {
+    transform: scaleY(0);
+    transform-origin: center;
+    animation: line-in-y 380ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation-delay: var(--fd, 0ms);
+  }
+
+  .path-draw {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    animation: draw 640ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
     animation-delay: var(--fd, 0ms);
   }
 }
@@ -56,5 +90,37 @@ body {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes card-in {
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes orb-in {
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@keyframes line-in-x {
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes line-in-y {
+  to {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes draw {
+  to {
+    stroke-dashoffset: 0;
   }
 }

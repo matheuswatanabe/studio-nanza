@@ -3,49 +3,8 @@
 import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Logomark from "@/components/Logomark";
+import IdentityOrb from "@/components/IdentityOrb";
 import { PERFIS } from "@/lib/auth";
-
-function BrandPanel() {
-  return (
-    <div className="relative hidden w-[44%] shrink-0 overflow-hidden bg-brand-ink lg:flex lg:flex-col lg:justify-between">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0"
-        style={{
-          background:
-            "radial-gradient(120% 90% at 12% 8%, rgba(255,255,255,0.07), transparent 55%), radial-gradient(90% 70% at 90% 100%, rgba(176,141,87,0.16), transparent 60%)",
-        }}
-      />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 opacity-[0.05]"
-        style={{
-          backgroundImage:
-            "linear-gradient(#F3F4EF 1px, transparent 1px), linear-gradient(90deg, #F3F4EF 1px, transparent 1px)",
-          backgroundSize: "44px 44px",
-        }}
-      />
-
-      <div className="relative z-10 px-14 pt-14">
-        <p className="text-[11px] font-medium uppercase tracking-[0.28em] text-brand-gold">
-          Painel interno
-        </p>
-      </div>
-
-      <div className="relative z-10 px-14 pb-16">
-        <Logomark tone="light" size={56} />
-        <h1 className="mt-8 font-display text-[2.75rem] font-medium leading-[1.05] text-brand-paper">
-          Studio
-          <br />
-          Nanza
-        </h1>
-        <p className="mt-5 max-w-xs font-display text-lg italic leading-snug text-brand-paper/70">
-          Where ideas become identity.
-        </p>
-      </div>
-    </div>
-  );
-}
 
 const INICIAL_ESTILO = {
   Natan: "N",
@@ -81,68 +40,94 @@ function PerfilForm() {
   }
 
   return (
-    <div className="flex min-h-screen w-full bg-brand-paper">
-      <BrandPanel />
-
-      <div className="flex flex-1 items-center justify-center px-6 py-16 sm:px-12">
-        <div className="w-full max-w-sm">
+    <div className="flex min-h-screen w-full items-center justify-center bg-brand-paper p-4 sm:p-8">
+      <div
+        className="card-in grid w-full max-w-5xl grid-cols-1 gap-0 overflow-hidden rounded-[28px] bg-brand-ink shadow-[0_60px_120px_-40px_rgba(11,42,61,0.45)] lg:grid-cols-2"
+        style={{ minHeight: "580px" }}
+      >
+        <div className="flex flex-col justify-between p-8 sm:p-12">
           <div
-            className="brand-panel-fade mb-10 flex items-center gap-3 lg:hidden"
+            className="brand-panel-fade flex items-center gap-2.5"
             style={{ "--fd": "0ms" }}
           >
-            <Logomark tone="dark" size={36} />
-            <span className="font-display text-lg font-medium text-brand-ink">
+            <Logomark tone="light" size={26} />
+            <span className="text-sm font-medium text-brand-paper">
               Studio Nanza
             </span>
           </div>
 
-          <div className="brand-panel-fade" style={{ "--fd": "60ms" }}>
-            <h2 className="font-display text-3xl font-medium text-brand-ink">
-              Quem é você?
-            </h2>
-            <p className="mt-2 text-sm text-brand-ink/60">
-              Selecione seu perfil para continuar.
+          <div className="max-w-sm">
+            <p
+              className="brand-panel-fade text-[11px] font-medium uppercase tracking-[0.24em] text-brand-gold"
+              style={{ "--fd": "60ms" }}
+            >
+              Painel interno
+            </p>
+            <h1
+              className="brand-panel-fade mt-3 font-display text-4xl font-medium italic leading-[1.15] text-brand-paper"
+              style={{ "--fd": "110ms" }}
+            >
+              Quem é você
+              <br />
+              hoje?
+            </h1>
+
+            <div className="mt-9 flex flex-col gap-2.5">
+              {PERFIS.map((perfil, i) => {
+                const carregando = selecionando === perfil;
+                return (
+                  <button
+                    key={perfil}
+                    type="button"
+                    onClick={() => selecionar(perfil)}
+                    disabled={selecionando !== null}
+                    style={{ "--fd": `${170 + i * 60}ms` }}
+                    className="brand-panel-fade group flex items-center gap-3.5 rounded-full border border-brand-paper/15 bg-brand-paper/[0.06] px-3 py-2.5 text-left transition duration-150 hover:border-brand-paper/40 hover:bg-brand-paper/10 active:scale-[0.99] disabled:pointer-events-none disabled:opacity-50"
+                  >
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand-gold font-display text-sm font-medium text-brand-ink-deep">
+                      {INICIAL_ESTILO[perfil] ?? perfil.charAt(0)}
+                    </span>
+                    <span className="flex-1 text-sm font-medium text-brand-paper">
+                      {carregando ? "Entrando..." : perfil}
+                    </span>
+                    <span className="pr-1 text-brand-paper/30 transition group-hover:translate-x-0.5 group-hover:text-brand-paper/60">
+                      &#8594;
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {erro && (
+              <p className="mt-4 text-sm text-red-400" role="alert">
+                {erro}
+              </p>
+            )}
+
+            <p
+              className="brand-panel-fade mt-6 text-xs text-brand-paper/35"
+              style={{ "--fd": "360ms" }}
+            >
+              Cada lançamento fica identificado com o perfil selecionado.
             </p>
           </div>
 
-          <div className="mt-8 flex flex-col gap-3">
-            {PERFIS.map((perfil, i) => {
-              const carregando = selecionando === perfil;
-              return (
-                <button
-                  key={perfil}
-                  type="button"
-                  onClick={() => selecionar(perfil)}
-                  disabled={selecionando !== null}
-                  style={{ "--fd": `${120 + i * 70}ms` }}
-                  className="brand-panel-fade group flex items-center gap-4 rounded-xl border border-brand-ink/12 bg-white px-4 py-3.5 text-left transition hover:-translate-y-0.5 hover:border-brand-ink hover:shadow-[0_10px_24px_-14px_rgba(11,42,61,0.35)] disabled:pointer-events-none disabled:opacity-50"
-                >
-                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-brand-ink font-display text-lg font-medium text-brand-paper transition group-hover:bg-brand-ink-soft">
-                    {INICIAL_ESTILO[perfil] ?? perfil.charAt(0)}
-                  </span>
-                  <span className="flex-1 text-sm font-medium text-brand-ink">
-                    {carregando ? "Entrando..." : perfil}
-                  </span>
-                  <span className="text-brand-ink/25 transition group-hover:translate-x-0.5 group-hover:text-brand-ink/60">
-                    &#8594;
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-
-          {erro && (
-            <p className="mt-4 text-sm text-red-600" role="alert">
-              {erro}
-            </p>
-          )}
-
-          <p
-            className="brand-panel-fade mt-10 text-xs text-brand-ink/40"
-            style={{ "--fd": "340ms" }}
+          <div
+            className="brand-panel-fade inline-flex w-fit items-center gap-2 rounded-full border border-brand-paper/15 px-3 py-1.5 text-[11px] text-brand-paper/50"
+            style={{ "--fd": "400ms" }}
           >
-            Cada lançamento fica identificado com o perfil selecionado.
-          </p>
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+            Sistema ativo
+          </div>
+        </div>
+
+        <div className="hidden p-3 lg:block">
+          <IdentityOrb
+            orbDelay="200ms"
+            lineDelay="300ms"
+            pathDelay="380ms"
+            telemetryDelay="460ms"
+          />
         </div>
       </div>
     </div>
