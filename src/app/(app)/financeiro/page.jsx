@@ -26,6 +26,21 @@ function hojeISO() {
   return new Date().toISOString().slice(0, 10);
 }
 
+const MESES = [
+  { valor: "01", label: "Janeiro" },
+  { valor: "02", label: "Fevereiro" },
+  { valor: "03", label: "Março" },
+  { valor: "04", label: "Abril" },
+  { valor: "05", label: "Maio" },
+  { valor: "06", label: "Junho" },
+  { valor: "07", label: "Julho" },
+  { valor: "08", label: "Agosto" },
+  { valor: "09", label: "Setembro" },
+  { valor: "10", label: "Outubro" },
+  { valor: "11", label: "Novembro" },
+  { valor: "12", label: "Dezembro" },
+];
+
 function statusReal(t) {
   if (t.status_pagamento === "pendente" && t.data < hojeISO()) return "atrasado";
   return t.status_pagamento;
@@ -177,6 +192,10 @@ export default function FinanceiroPage() {
   const [busca, setBusca] = useState("");
   const [filtroTipo, setFiltroTipo] = useState("todos");
   const [filtroStatus, setFiltroStatus] = useState("todos");
+  const [filtroAno, setFiltroAno] = useState(() => hojeISO().slice(0, 4));
+  const [filtroMes, setFiltroMes] = useState(() => hojeISO().slice(5, 7));
+  const [dataInicio, setDataInicio] = useState("");
+  const [dataFim, setDataFim] = useState("");
 
   async function carregarDados() {
     setCarregando(true);
@@ -193,31 +212,46 @@ export default function FinanceiroPage() {
     carregarDados();
   }, []);
 
-  const resumo = useMemo(() => {
-    const mesAtual = hojeISO().slice(0, 7);
+  const anosDisponiveis = useMemo(() => {
+    const anos = new Set(transacoes.map((t) => t.data.slice(0, 4)));
+    anos.add(hojeISO().slice(0, 4));
+    return Array.from(anos).sort((a, b) => b.localeCompare(a));
+  }, [transacoes]);
 
-    const entradas = transacoes.filter((t) => t.tipo === "entrada");
-    const saidas = transacoes.filter((t) => t.tipo === "saida");
+  const transacoesDoPeriodo = useMemo(() => {
+    return transacoes.filter((t) => {
+      const combinaAno = filtroAno === "todos" || t.data.slice(0, 4) === filtroAno;
+      const combinaMes = filtroMes === "todos" || t.data.slice(5, 7) === filtroMes;
+      const combinaInicio = !dataInicio || t.data >= dataInicio;
+      const combinaFim = !dataFim || t.data <= dataFim;
+      return combinaAno && combinaMes && combinaInicio && combinaFim;
+    });
+  }, [transacoes, filtroAno, filtroMes, dataInicio, dataFim]);
+
+  const periodoAtivo =
+    filtroAno !== "todos" || filtroMes !== "todos" || dataInicio || dataFim;
+
+  const resumo = useMemo(() => {
+    const entradasTotais = transacoes.filter((t) => t.tipo === "entrada");
+    const saidasTotais = transacoes.filter((t) => t.tipo === "saida");
 
     const saldo =
-      entradas.reduce((s, t) => s + t.valor, 0) -
-      saidas.reduce((s, t) => s + t.valor, 0);
+      entradasTotais.reduce((s, t) => s + t.valor, 0) -
+      saidasTotais.reduce((s, t) => s + t.valor, 0);
 
-    const aReceber = entradas
+    const aReceber = entradasTotais
       .filter((t) => t.status_pagamento === "pendente")
       .reduce((s, t) => s + t.valor, 0);
 
-    const aPagar = saidas
+    const aPagar = saidasTotais
       .filter((t) => t.status_pagamento === "pendente")
       .reduce((s, t) => s + t.valor, 0);
 
-    const receitaMes = entradas
-      .filter((t) => t.data.slice(0, 7) === mesAtual)
-      .reduce((s, t) => s + t.valor, 0);
+    const entradasPeriodo = transacoesDoPeriodo.filter((t) => t.tipo === "entrada");
+    const saidasPeriodo = transacoesDoPeriodo.filter((t) => t.tipo === "saida");
 
-    const despesaMes = saidas
-      .filter((t) => t.data.slice(0, 7) === mesAtual)
-      .reduce((s, t) => s + t.valor, 0);
+    const receitaMes = entradasPeriodo.reduce((s, t) => s + t.valor, 0);
+    const despesaMes = saidasPeriodo.reduce((s, t) => s + t.valor, 0);
 
     return {
       saldo,
@@ -227,19 +261,26 @@ export default function FinanceiroPage() {
       despesaMes,
       lucroMes: receitaMes - despesaMes,
     };
-  }, [transacoes]);
+  }, [transacoes, transacoesDoPeriodo]);
 
   const transacoesFiltradas = useMemo(() => {
     const termo = busca.trim().toLowerCase();
 
-    return transacoes.filter((t) => {
+    return transacoesDoPeriodo.filter((t) => {
       const combinaBusca = !termo || t.descricao.toLowerCase().includes(termo);
       const combinaTipo = filtroTipo === "todos" || t.tipo === filtroTipo;
       const combinaStatus =
         filtroStatus === "todos" || statusReal(t) === filtroStatus;
       return combinaBusca && combinaTipo && combinaStatus;
     });
-  }, [transacoes, busca, filtroTipo, filtroStatus]);
+  }, [transacoesDoPeriodo, busca, filtroTipo, filtroStatus]);
+
+  function limparFiltroPeriodo() {
+    setFiltroAno("todos");
+    setFiltroMes("todos");
+    setDataInicio("");
+    setDataFim("");
+  }
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -358,24 +399,93 @@ export default function FinanceiroPage() {
         </div>
       </div>
 
-      <p className="mt-6 text-xs font-medium uppercase tracking-wide text-neutral-400">
-        Fluxo de caixa do mês
-      </p>
+      <div className="mt-6 flex items-center justify-between">
+        <p className="text-xs font-medium uppercase tracking-wide text-neutral-400">
+          Fluxo de caixa do período selecionado
+        </p>
+      </div>
+
+      {!carregando && transacoes.length > 0 && (
+        <div className="mt-2 flex flex-col gap-3 rounded-xl border border-neutral-200 bg-white p-4 sm:flex-row sm:flex-wrap sm:items-end">
+          <div className="flex flex-col gap-1">
+            <label className="text-xs font-medium text-neutral-500">Ano</label>
+            <select
+              value={filtroAno}
+              onChange={(e) => setFiltroAno(e.target.value)}
+              className="rounded-lg border border-neutral-300 px-3 py-2 text-sm text-neutral-900 outline-none focus:border-neutral-900"
+            >
+              <option value="todos">Todos os anos</option>
+              {anosDisponiveis.map((ano) => (
+                <option key={ano} value={ano}>
+                  {ano}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <label className="text-xs font-medium text-neutral-500">Mês</label>
+            <select
+              value={filtroMes}
+              onChange={(e) => setFiltroMes(e.target.value)}
+              className="rounded-lg border border-neutral-300 px-3 py-2 text-sm text-neutral-900 outline-none focus:border-neutral-900"
+            >
+              <option value="todos">Todos os meses</option>
+              {MESES.map((m) => (
+                <option key={m.valor} value={m.valor}>
+                  {m.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <label className="text-xs font-medium text-neutral-500">De</label>
+            <input
+              type="date"
+              value={dataInicio}
+              onChange={(e) => setDataInicio(e.target.value)}
+              className="rounded-lg border border-neutral-300 px-3 py-2 text-sm text-neutral-900 outline-none focus:border-neutral-900"
+            />
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <label className="text-xs font-medium text-neutral-500">Até</label>
+            <input
+              type="date"
+              value={dataFim}
+              onChange={(e) => setDataFim(e.target.value)}
+              className="rounded-lg border border-neutral-300 px-3 py-2 text-sm text-neutral-900 outline-none focus:border-neutral-900"
+            />
+          </div>
+
+          {periodoAtivo && (
+            <button
+              type="button"
+              onClick={limparFiltroPeriodo}
+              className="rounded-lg border border-neutral-300 px-3 py-2 text-sm font-medium text-neutral-600 hover:bg-neutral-50"
+            >
+              Limpar período
+            </button>
+          )}
+        </div>
+      )}
+
       <div className="mt-2 grid grid-cols-1 gap-4 sm:grid-cols-3">
         <div className="rounded-xl border border-neutral-200 bg-white p-5">
-          <p className="text-xs font-medium text-neutral-500">Receita do mês</p>
+          <p className="text-xs font-medium text-neutral-500">Receita do período</p>
           <p className="mt-2 text-2xl font-semibold text-emerald-600">
             {formatarMoeda(resumo.receitaMes)}
           </p>
         </div>
         <div className="rounded-xl border border-neutral-200 bg-white p-5">
-          <p className="text-xs font-medium text-neutral-500">Despesas do mês</p>
+          <p className="text-xs font-medium text-neutral-500">Despesas do período</p>
           <p className="mt-2 text-2xl font-semibold text-red-600">
             {formatarMoeda(resumo.despesaMes)}
           </p>
         </div>
         <div className="rounded-xl border border-neutral-200 bg-white p-5">
-          <p className="text-xs font-medium text-neutral-500">Lucro do mês</p>
+          <p className="text-xs font-medium text-neutral-500">Lucro do período</p>
           <p
             className={`mt-2 text-2xl font-semibold ${
               resumo.lucroMes >= 0 ? "text-neutral-900" : "text-red-600"
