@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
+import Avatar from "@/components/Avatar";
 
 const navItems = [
   { label: "Início", href: "/" },
@@ -11,7 +12,7 @@ const navItems = [
   { label: "Configurações", href: "/configuracoes" },
 ];
 
-export default function Sidebar() {
+export default function Sidebar({ perfil }) {
   const pathname = usePathname();
   const router = useRouter();
 
@@ -49,6 +50,22 @@ export default function Sidebar() {
       </nav>
 
       <div className="border-t border-neutral-200 px-3 py-4">
+        {perfil && (
+          <div className="mb-3 flex items-center gap-2 px-3">
+            <Avatar nome={perfil} size="md" />
+            <div className="min-w-0">
+              <p className="truncate text-sm font-medium text-neutral-900">
+                {perfil}
+              </p>
+              <Link
+                href="/perfil"
+                className="text-xs text-neutral-400 hover:text-neutral-600 hover:underline"
+              >
+                Trocar perfil
+              </Link>
+            </div>
+          </div>
+        )}
         <button
           type="button"
           onClick={sair}

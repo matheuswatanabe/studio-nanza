@@ -3,6 +3,11 @@
 // qualquer pessoa com o link do site acesse os dados do studio.
 export const COOKIE_NAME = "studio_auth";
 
+// Depois da senha, cada pessoa escolhe seu perfil (sem senha própria) só
+// para identificar quem lançou cada cliente/projeto/transação.
+export const COOKIE_PERFIL = "studio_perfil";
+export const PERFIS = ["Natan", "Lucas", "Matheus"];
+
 // Usa Web Crypto (disponível tanto no middleware, que roda no Edge Runtime,
 // quanto nas rotas de API, que rodam no Node.js) para gerar um token
 // derivado da senha — em vez de guardar a senha em texto puro no cookie.

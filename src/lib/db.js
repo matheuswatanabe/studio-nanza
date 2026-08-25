@@ -50,7 +50,7 @@ if (process.env.NODE_ENV !== "production") {
 // preenchido. Se não corresponder a nenhum cliente existente, cria um
 // cadastro semi-completo (nome = empresa digitada) para que o projeto nunca
 // fique bloqueado esperando um cadastro prévio.
-export async function resolverOuCriarCliente({ clienteId, clienteEmpresa }) {
+export async function resolverOuCriarCliente({ clienteId, clienteEmpresa, criadoPor }) {
   if (clienteId) {
     const [cliente] = await sql`SELECT * FROM clientes WHERE id = ${clienteId}`;
     return cliente ?? null;
@@ -66,8 +66,8 @@ export async function resolverOuCriarCliente({ clienteId, clienteEmpresa }) {
   if (existente) return existente;
 
   const [criado] = await sql`
-    INSERT INTO clientes (nome, empresa)
-    VALUES (${empresa}, ${empresa})
+    INSERT INTO clientes (nome, empresa, criado_por)
+    VALUES (${empresa}, ${empresa}, ${criadoPor ?? null})
     RETURNING *
   `;
 

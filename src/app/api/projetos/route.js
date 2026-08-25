@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { sql, STATUS_PROJETO, TIPOS_SERVICO, resolverOuCriarCliente } from "@/lib/db";
+import { perfilAtual } from "@/lib/perfil";
 
 export async function GET() {
   const projetos = await sql`
@@ -66,9 +67,12 @@ export async function POST(request) {
     return NextResponse.json({ error: erro }, { status: 400 });
   }
 
+  const criadoPor = await perfilAtual();
+
   const cliente = await resolverOuCriarCliente({
     clienteId: valores.clienteId,
     clienteEmpresa: valores.clienteEmpresa,
+    criadoPor,
   });
 
   if (!cliente) {
@@ -80,20 +84,20 @@ export async function POST(request) {
 
   const [projetoCriado] = await sql`
     INSERT INTO projetos
-      (nome, cliente_id, tipos_servico, status, data_inicio, prazo_interno, prazo_entrega, observacoes)
+      (nome, cliente_id, tipos_servico, status, data_inicio, prazo_interno, prazo_entrega, observacoes, criado_por)
     VALUES (
       ${valores.nome}, ${cliente.id}, ${sql.json(valores.tiposServico)}, ${valores.status},
-      ${valores.dataInicio}, ${valores.prazoInterno}, ${valores.prazoEntrega}, ${valores.observacoes}
+      ${valores.dataInicio}, ${valores.prazoInterno}, ${valores.prazoEntrega}, ${valores.observacoes}, ${criadoPor}
     )
     RETURNING *
   `;
 
   if (valores.valor) {
     await sql`
-      INSERT INTO transacoes (descricao, valor, tipo, projeto_id, status_pagamento, data)
+      INSERT INTO transacoes (descricao, valor, tipo, projeto_id, status_pagamento, data, criado_por)
       VALUES (
         ${"Projeto: " + valores.nome}, ${valores.valor}, 'entrada', ${projetoCriado.id},
-        'pendente', ${valores.dataInicio ?? new Date().toISOString().slice(0, 10)}
+        'pendente', ${valores.dataInicio ?? new Date().toISOString().slice(0, 10)}, ${criadoPor}
       )
     `;
   }

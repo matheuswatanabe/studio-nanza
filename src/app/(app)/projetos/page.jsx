@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Avatar from "@/components/Avatar";
 
 const STATUS_COLUNAS = ["Briefing", "Em Andamento", "Revisão Externa", "Finalizado"];
 
@@ -656,12 +657,17 @@ export default function ProjetosPage() {
                           atrasado ? "border-red-300" : "border-neutral-200"
                         }`}
                       >
-                        <p className="text-sm font-medium text-neutral-900">
-                          {projeto.nome}
-                        </p>
-                        <p className="mt-0.5 text-xs text-neutral-500">
-                          {projeto.cliente_nome}
-                        </p>
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="min-w-0">
+                            <p className="text-sm font-medium text-neutral-900">
+                              {projeto.nome}
+                            </p>
+                            <p className="mt-0.5 text-xs text-neutral-500">
+                              {projeto.cliente_nome}
+                            </p>
+                          </div>
+                          <Avatar nome={projeto.criado_por} />
+                        </div>
 
                         {projeto.tipos_servico.length > 0 && (
                           <div className="mt-2 flex flex-wrap gap-1">

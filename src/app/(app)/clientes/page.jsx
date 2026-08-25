@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Avatar from "@/components/Avatar";
 
 const FORM_INICIAL = {
   nome: "",
@@ -491,9 +492,12 @@ export default function ClientesPage() {
             <div key={cliente.id} className="p-4">
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
-                  <p className="text-sm font-medium text-neutral-900">
-                    {cliente.nome}
-                  </p>
+                  <div className="flex items-center gap-2">
+                    <p className="text-sm font-medium text-neutral-900">
+                      {cliente.nome}
+                    </p>
+                    <Avatar nome={cliente.criado_por} />
+                  </div>
 
                   {erroExclusao?.id === cliente.id && (
                     <p className="mt-1 text-xs text-red-600">

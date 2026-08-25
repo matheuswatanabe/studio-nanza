@@ -54,3 +54,10 @@ create table if not exists marca_assets (
   rotulo text,
   criado_em timestamptz not null default now()
 );
+
+-- Migração: identifica qual perfil (Natan, Lucas ou Matheus) lançou cada
+-- registro. `add column if not exists` é seguro rodar de novo em bancos que
+-- já existem — não afeta instalações novas nem duplica nada.
+alter table clientes add column if not exists criado_por text;
+alter table projetos add column if not exists criado_por text;
+alter table transacoes add column if not exists criado_por text;

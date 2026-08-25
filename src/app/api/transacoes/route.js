@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { sql, CATEGORIAS_DESPESA, STATUS_PAGAMENTO } from "@/lib/db";
+import { perfilAtual } from "@/lib/perfil";
 
 export async function GET() {
   const transacoes = await sql`
@@ -58,11 +59,13 @@ export async function POST(request) {
     }
   }
 
+  const criadoPor = await perfilAtual();
+
   const [transacaoCriada] = await sql`
-    INSERT INTO transacoes (descricao, valor, tipo, data, categoria, projeto_id, status_pagamento)
+    INSERT INTO transacoes (descricao, valor, tipo, data, categoria, projeto_id, status_pagamento, criado_por)
     VALUES (
       ${valores.descricao}, ${valores.valor}, ${valores.tipo}, ${valores.data},
-      ${valores.categoria}, ${valores.projetoId}, ${valores.statusPagamento}
+      ${valores.categoria}, ${valores.projetoId}, ${valores.statusPagamento}, ${criadoPor}
     )
     RETURNING *
   `;

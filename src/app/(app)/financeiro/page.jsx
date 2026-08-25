@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Avatar from "@/components/Avatar";
 
 const FORM_INICIAL = {
   descricao: "",
@@ -600,7 +601,10 @@ export default function FinanceiroPage() {
               ) : (
                 <tr key={t.id}>
                   <td className="px-4 py-3 text-neutral-900">
-                    {t.descricao}
+                    <div className="flex items-center gap-2">
+                      <span>{t.descricao}</span>
+                      <Avatar nome={t.criado_por} />
+                    </div>
                     <p className="text-xs font-normal text-neutral-400">
                       {t.projeto_nome
                         ? [t.projeto_nome, t.cliente_empresa]

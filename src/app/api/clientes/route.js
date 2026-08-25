@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { sql } from "@/lib/db";
+import { perfilAtual } from "@/lib/perfil";
 
 export async function GET() {
   const clientes = await sql`SELECT * FROM clientes ORDER BY criado_em DESC`;
@@ -34,9 +35,11 @@ export async function POST(request) {
   const email = (body.email ?? "").trim() || null;
   const whatsapp = (body.whatsapp ?? "").trim() || null;
 
+  const criadoPor = await perfilAtual();
+
   const [cliente] = await sql`
-    INSERT INTO clientes (nome, empresa, email, whatsapp)
-    VALUES (${nome}, ${empresa}, ${email}, ${whatsapp})
+    INSERT INTO clientes (nome, empresa, email, whatsapp, criado_por)
+    VALUES (${nome}, ${empresa}, ${email}, ${whatsapp}, ${criadoPor})
     RETURNING *
   `;
 
