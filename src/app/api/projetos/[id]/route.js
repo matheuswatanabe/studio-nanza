@@ -120,7 +120,17 @@ export async function DELETE(request, { params }) {
     );
   }
 
-  await sql`DELETE FROM projetos WHERE id = ${id}`;
+  // Apaga junto as transações que o próprio projeto gerou automaticamente
+  // (receita do projeto e pagamentos à equipe). Transações que o usuário
+  // vinculou manualmente ao projeto não são tocadas — ficam sem projeto
+  // vinculado (projeto_id vira null pela constraint da tabela).
+  await sql.begin(async (tx) => {
+    await tx`
+      DELETE FROM transacoes
+      WHERE projeto_id = ${id} AND gerado_automaticamente = true
+    `;
+    await tx`DELETE FROM projetos WHERE id = ${id}`;
+  });
 
   return NextResponse.json({ ok: true });
 }

@@ -66,3 +66,9 @@ alter table transacoes add column if not exists criado_por text;
 -- transação de saída é o pagamento — usado nas contas a pagar geradas
 -- automaticamente ao lançar um projeto com pagamento à equipe.
 alter table transacoes add column if not exists funcionario text;
+
+-- Migração: marca transações criadas automaticamente ao lançar um projeto
+-- (a receita do projeto e os pagamentos à equipe), para que sejam apagadas
+-- junto quando o projeto é excluído — sem afetar transações que o usuário
+-- vinculou manualmente ao projeto.
+alter table transacoes add column if not exists gerado_automaticamente boolean not null default false;

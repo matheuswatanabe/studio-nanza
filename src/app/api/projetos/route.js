@@ -111,10 +111,10 @@ export async function POST(request) {
 
   if (valores.valor) {
     await sql`
-      INSERT INTO transacoes (descricao, valor, tipo, projeto_id, status_pagamento, data, criado_por)
+      INSERT INTO transacoes (descricao, valor, tipo, projeto_id, status_pagamento, data, criado_por, gerado_automaticamente)
       VALUES (
         ${"Projeto: " + valores.nome}, ${valores.valor}, 'entrada', ${projetoCriado.id},
-        'pendente', ${dataLancamento}, ${criadoPor}
+        'pendente', ${dataLancamento}, ${criadoPor}, true
       )
     `;
   }
@@ -124,10 +124,10 @@ export async function POST(request) {
     if (!valorPagamento) continue;
 
     await sql`
-      INSERT INTO transacoes (descricao, valor, tipo, projeto_id, status_pagamento, data, criado_por, funcionario)
+      INSERT INTO transacoes (descricao, valor, tipo, projeto_id, status_pagamento, data, criado_por, funcionario, gerado_automaticamente)
       VALUES (
         ${"Pagamento equipe (" + perfil + "): " + valores.nome}, ${valorPagamento}, 'saida', ${projetoCriado.id},
-        'pendente', ${dataLancamento}, ${criadoPor}, ${perfil}
+        'pendente', ${dataLancamento}, ${criadoPor}, ${perfil}, true
       )
     `;
   }
