@@ -1,5 +1,33 @@
 import { NextResponse } from "next/server";
-import { COOKIE_NAME, COOKIE_PERFIL, PERFIS, tokenEsperado } from "@/lib/auth";
+import {
+  COOKIE_NAME,
+  COOKIE_PERFIL,
+  PERFIS,
+  SESSAO_MAX_AGE,
+  tokenEsperado,
+} from "@/lib/auth";
+
+const COOKIE_OPCOES = {
+  httpOnly: true,
+  secure: true,
+  sameSite: "lax",
+  maxAge: SESSAO_MAX_AGE,
+  path: "/",
+};
+
+// Renova a validade dos cookies de sessão a cada requisição autenticada,
+// para que ninguém seja deslogado no meio de uma tarefa — só expira de
+// verdade quem ficar SESSAO_MAX_AGE sem interagir com o sistema.
+function renovarSessao(response, request, { incluirPerfil }) {
+  response.cookies.set(COOKIE_NAME, request.cookies.get(COOKIE_NAME).value, COOKIE_OPCOES);
+
+  const perfil = request.cookies.get(COOKIE_PERFIL)?.value;
+  if (incluirPerfil && perfil) {
+    response.cookies.set(COOKIE_PERFIL, perfil, COOKIE_OPCOES);
+  }
+
+  return response;
+}
 
 export async function middleware(request) {
   const { pathname } = request.nextUrl;
@@ -28,7 +56,7 @@ export async function middleware(request) {
   }
 
   if (pathname === "/perfil" || pathname === "/api/perfil") {
-    return NextResponse.next();
+    return renovarSessao(NextResponse.next(), request, { incluirPerfil: false });
   }
 
   const perfil = request.cookies.get(COOKIE_PERFIL)?.value;
@@ -45,7 +73,7 @@ export async function middleware(request) {
     return NextResponse.redirect(url);
   }
 
-  return NextResponse.next();
+  return renovarSessao(NextResponse.next(), request, { incluirPerfil: true });
 }
 
 export const config = {

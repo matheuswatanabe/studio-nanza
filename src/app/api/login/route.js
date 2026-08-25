@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { COOKIE_NAME, tokenEsperado } from "@/lib/auth";
+import { COOKIE_NAME, SESSAO_MAX_AGE, tokenEsperado } from "@/lib/auth";
 
 export async function POST(request) {
   if (!process.env.APP_PASSWORD) {
@@ -24,7 +24,7 @@ export async function POST(request) {
     httpOnly: true,
     secure: true,
     sameSite: "lax",
-    maxAge: 60 * 60 * 24 * 30,
+    maxAge: SESSAO_MAX_AGE,
     path: "/",
   });
 

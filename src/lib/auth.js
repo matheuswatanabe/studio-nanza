@@ -8,6 +8,12 @@ export const COOKIE_NAME = "studio_auth";
 export const COOKIE_PERFIL = "studio_perfil";
 export const PERFIS = ["Natan", "Lucas", "Matheus"];
 
+// Sessão expira em 24h de inatividade — mas o middleware renova esse prazo
+// a cada requisição autenticada, então quem está usando o sistema não é
+// deslogado no meio de uma tarefa. Só expira de verdade quem ficar 24h
+// sem abrir o site.
+export const SESSAO_MAX_AGE = 60 * 60 * 24;
+
 // Usa Web Crypto (disponível tanto no middleware, que roda no Edge Runtime,
 // quanto nas rotas de API, que rodam no Node.js) para gerar um token
 // derivado da senha — em vez de guardar a senha em texto puro no cookie.

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { COOKIE_PERFIL, PERFIS } from "@/lib/auth";
+import { COOKIE_PERFIL, PERFIS, SESSAO_MAX_AGE } from "@/lib/auth";
 
 export async function POST(request) {
   const body = await request.json();
@@ -14,7 +14,7 @@ export async function POST(request) {
     httpOnly: true,
     secure: true,
     sameSite: "lax",
-    maxAge: 60 * 60 * 24 * 30,
+    maxAge: SESSAO_MAX_AGE,
     path: "/",
   });
 
