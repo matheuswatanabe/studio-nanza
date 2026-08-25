@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 
 const navItems = [
   { label: "Início", href: "/" },
@@ -13,6 +13,13 @@ const navItems = [
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const router = useRouter();
+
+  async function sair() {
+    await fetch("/api/logout", { method: "POST" });
+    router.replace("/login");
+    router.refresh();
+  }
 
   return (
     <aside className="flex h-screen w-64 flex-col border-r border-neutral-200 bg-white">
@@ -41,8 +48,17 @@ export default function Sidebar() {
         })}
       </nav>
 
-      <div className="border-t border-neutral-200 px-6 py-4 text-xs text-neutral-400">
-        Dados salvos localmente
+      <div className="border-t border-neutral-200 px-3 py-4">
+        <button
+          type="button"
+          onClick={sair}
+          className="w-full rounded-lg px-3 py-2 text-left text-sm font-medium text-neutral-500 hover:bg-neutral-100"
+        >
+          Sair
+        </button>
+        <p className="mt-2 px-3 text-xs text-neutral-400">
+          Dados salvos com segurança na nuvem
+        </p>
       </div>
     </aside>
   );
