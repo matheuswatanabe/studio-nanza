@@ -91,10 +91,21 @@ export default function Sidebar({ perfil }) {
           aberto ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        <div className="flex h-16 items-center px-6">
+        <div className="flex h-16 items-center justify-between px-6">
           <span className="text-lg font-semibold text-neutral-900">
             Studio
           </span>
+          <button
+            type="button"
+            onClick={() => setAberto(false)}
+            aria-label="Fechar menu"
+            className="flex h-9 w-9 items-center justify-center rounded-lg text-neutral-500 hover:bg-neutral-100 lg:hidden"
+          >
+            <span className="relative block h-4 w-4">
+              <span className="absolute left-1/2 top-1/2 h-0.5 w-4 -translate-x-1/2 -translate-y-1/2 rotate-45 rounded-full bg-current" />
+              <span className="absolute left-1/2 top-1/2 h-0.5 w-4 -translate-x-1/2 -translate-y-1/2 -rotate-45 rounded-full bg-current" />
+            </span>
+          </button>
         </div>
 
         <nav className="flex-1 space-y-1 px-3">
