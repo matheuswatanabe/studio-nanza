@@ -26,21 +26,27 @@ body {
 }
 */
 
+/* Entrada de texto/card: são animações curtas e de uma vez só (não
+   ficam em loop), então tocam sempre — inclusive para quem tem
+   "reduzir movimento" ativado no sistema, já que esse tipo de fade
+   pontual não costuma ser o gatilho que essa preferência visa evitar. */
+.brand-panel-fade {
+  opacity: 0;
+  transform: translateY(14px);
+  animation: brand-panel-in 600ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation-delay: var(--fd, 0ms);
+}
+
+.brand-card-fade {
+  opacity: 0;
+  transform: translateY(20px) scale(0.96);
+  animation: brand-card-in 650ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation-delay: var(--fd, 0ms);
+}
+
+/* Já o "fogo" é um loop contínuo — esse sim respeita reduzir
+   movimento, como recomendado para animações que não têm fim. */
 @media (prefers-reduced-motion: no-preference) {
-  .brand-panel-fade {
-    opacity: 0;
-    transform: translateY(14px);
-    animation: brand-panel-in 600ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    animation-delay: var(--fd, 0ms);
-  }
-
-  .brand-card-fade {
-    opacity: 0;
-    transform: translateY(20px) scale(0.96);
-    animation: brand-card-in 650ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    animation-delay: var(--fd, 0ms);
-  }
-
   .fogo-animado {
     display: inline-block;
     transform-origin: 50% 90%;

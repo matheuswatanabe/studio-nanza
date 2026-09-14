@@ -10,6 +10,7 @@ function LoginForm() {
   const [senha, setSenha] = useState("");
   const [erro, setErro] = useState("");
   const [entrando, setEntrando] = useState(false);
+  const [saindo, setSaindo] = useState(false);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -22,20 +23,28 @@ function LoginForm() {
       body: JSON.stringify({ senha }),
     });
 
-    setEntrando(false);
-
     if (!res.ok) {
+      setEntrando(false);
       const data = await res.json();
       setErro(data.error ?? "Não foi possível entrar.");
       return;
     }
 
-    router.replace(searchParams.get("redirect") || "/");
-    router.refresh();
+    // Dá tempo da animação de saída rodar antes de trocar de tela —
+    // sem isso o Next troca a página na hora e nunca dá pra ver.
+    setSaindo(true);
+    setTimeout(() => {
+      router.replace(searchParams.get("redirect") || "/");
+      router.refresh();
+    }, 380);
   }
 
   return (
-    <div className="relative min-h-screen w-full overflow-hidden bg-[#242424]">
+    <div
+      className={`relative min-h-screen w-full overflow-hidden bg-[#242424] transition-all duration-[380ms] ease-in ${
+        saindo ? "scale-105 opacity-0" : "scale-100 opacity-100"
+      }`}
+    >
       <Image
         src="/images/login-bg.png"
         alt=""
