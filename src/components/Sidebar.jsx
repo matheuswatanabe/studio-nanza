@@ -91,8 +91,8 @@ export default function Sidebar({ perfil }) {
           aberto ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        <div className="flex h-16 items-center justify-between px-6">
-          <span className="text-lg font-semibold text-neutral-900">
+        <div className="flex h-16 items-center px-6">
+          <span className="hidden text-lg font-semibold text-neutral-900 lg:block">
             Studio
           </span>
           <button
