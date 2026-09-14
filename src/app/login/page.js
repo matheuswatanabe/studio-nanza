@@ -47,13 +47,16 @@ function LoginForm() {
 
       <div className="relative z-10 flex min-h-screen w-full items-center justify-center px-6 py-16">
         <div className="w-full max-w-lg text-center">
-          <p className="brand-panel-fade flex items-center justify-center gap-2 font-nunito text-sm font-bold text-white">
-            🔥 STUDIO NANZA
+          <p
+            className="brand-panel-fade flex items-center justify-center gap-2 font-nunito text-sm font-bold text-white"
+            style={{ "--fd": "0ms" }}
+          >
+            <span className="fogo-animado">🔥</span> STUDIO NANZA
           </p>
 
           <h1
             className="brand-panel-fade mt-5 font-rubik text-[clamp(1.9rem,7vw,3.75rem)] font-bold uppercase leading-[1.05] tracking-tight text-white"
-            style={{ "--fd": "60ms" }}
+            style={{ "--fd": "90ms" }}
           >
             <span className="block whitespace-nowrap">Where ideas</span>
             <span className="block whitespace-nowrap text-[#ffc928]">
@@ -64,8 +67,8 @@ function LoginForm() {
 
           <form
             onSubmit={handleSubmit}
-            className="brand-panel-fade mx-auto mt-10 w-full max-w-[300px] rounded-[20px] border border-white/25 bg-[#506588]/25 p-4 text-left shadow-[0px_26px_46px_-10px_rgba(0,0,0,0.35)] backdrop-blur-sm"
-            style={{ "--fd": "120ms" }}
+            className="brand-card-fade mx-auto mt-10 w-full max-w-[300px] rounded-[20px] border border-white/25 bg-[#506588]/25 p-4 text-left shadow-[0px_26px_46px_-10px_rgba(0,0,0,0.35)] backdrop-blur-sm"
+            style={{ "--fd": "220ms" }}
           >
             <label className="block font-rubik text-sm font-medium tracking-[0.02em] text-white">
               Senha
@@ -97,7 +100,7 @@ function LoginForm() {
 
           <p
             className="brand-panel-fade mx-auto mt-6 max-w-[220px] text-center font-nunito text-sm font-bold text-[#f7faff]"
-            style={{ "--fd": "180ms" }}
+            style={{ "--fd": "320ms" }}
           >
             Acesso restrito à equipe do Studio Nanza.
           </p>
