@@ -17,6 +17,10 @@ export async function GET() {
 
   const projetosComEntregaveis = projetos.map((projeto) => ({
     ...projeto,
+    // Alguns registros antigos guardaram tipos_servico como uma string em
+    // vez de um array (jsonb salvo errado). Normaliza aqui para o front
+    // nunca quebrar tentando chamar .map/.includes numa string.
+    tipos_servico: Array.isArray(projeto.tipos_servico) ? projeto.tipos_servico : [],
     entregaveis: entregaveis.filter((e) => e.projeto_id === projeto.id),
   }));
 
