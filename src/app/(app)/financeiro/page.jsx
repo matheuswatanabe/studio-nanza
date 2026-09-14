@@ -373,7 +373,7 @@ export default function FinanceiroPage() {
   }
 
   return (
-    <div className="mx-auto max-w-5xl px-8 py-10">
+    <div className="mx-auto max-w-5xl px-4 py-8 sm:px-8 sm:py-10">
       <h1 className="text-2xl font-semibold text-neutral-900">Financeiro</h1>
       <p className="mt-1 text-sm text-neutral-500">
         Contas a pagar, a receber e o fluxo de caixa do seu studio.
@@ -566,8 +566,8 @@ export default function FinanceiroPage() {
         </div>
       )}
 
-      <div className="mt-4 overflow-hidden rounded-xl border border-neutral-200 bg-white">
-        <table className="w-full text-left text-sm">
+      <div className="mt-4 overflow-x-auto rounded-xl border border-neutral-200 bg-white">
+        <table className="w-full min-w-[640px] text-left text-sm">
           <thead className="border-b border-neutral-200 bg-neutral-50 text-xs uppercase text-neutral-500">
             <tr>
               <th className="px-4 py-3 font-medium">Descrição</th>

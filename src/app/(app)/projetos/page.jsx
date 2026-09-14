@@ -573,7 +573,7 @@ export default function ProjetosPage() {
   const projetoSelecionado = projetos.find((p) => p.id === projetoSelecionadoId);
 
   return (
-    <div className="mx-auto max-w-7xl px-8 py-10">
+    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-8 sm:py-10">
       <div className="flex items-start justify-between gap-4">
         <div>
           <h1 className="text-2xl font-semibold text-neutral-900">Projetos</h1>

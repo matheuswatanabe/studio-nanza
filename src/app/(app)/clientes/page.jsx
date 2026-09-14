@@ -397,7 +397,7 @@ export default function ClientesPage() {
   }
 
   return (
-    <div className="mx-auto max-w-4xl px-8 py-10">
+    <div className="mx-auto max-w-4xl px-4 py-8 sm:px-8 sm:py-10">
       <h1 className="text-2xl font-semibold text-neutral-900">Clientes</h1>
       <p className="mt-1 text-sm text-neutral-500">
         Cadastre clientes, acompanhe o histórico e guarde os ativos da marca.
@@ -490,8 +490,8 @@ export default function ClientesPage() {
             </div>
           ) : (
             <div key={cliente.id} className="p-4">
-              <div className="flex items-start justify-between gap-3">
-                <div className="min-w-0">
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
                     <p className="text-sm font-medium text-neutral-900">
                       {cliente.nome}

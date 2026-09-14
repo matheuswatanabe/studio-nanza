@@ -8,9 +8,9 @@ export default async function AppLayout({ children }) {
   const perfil = PERFIS.includes(valor) ? valor : null;
 
   return (
-    <div className="flex bg-neutral-50">
+    <div className="flex min-h-screen flex-col bg-neutral-50 lg:flex-row">
       <Sidebar perfil={perfil} />
-      <main className="flex-1 overflow-y-auto">{children}</main>
+      <main className="min-w-0 flex-1 overflow-y-auto">{children}</main>
     </div>
   );
 }

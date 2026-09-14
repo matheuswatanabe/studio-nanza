@@ -81,7 +81,7 @@ export default async function Home() {
   } = await buscarResumo();
 
   return (
-    <div className="mx-auto max-w-5xl px-8 py-10">
+    <div className="mx-auto max-w-5xl px-4 py-8 sm:px-8 sm:py-10">
       <h1 className="text-2xl font-semibold text-neutral-900">
         Bem-vindo(a) de volta
       </h1>
