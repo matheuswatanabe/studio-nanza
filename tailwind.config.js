@@ -23,6 +23,8 @@ module.exports = {
         // precisar mexer em nenhuma classe.
         display: ['"Neue Montreal"', "var(--font-sans)", "sans-serif"],
         sans: ["var(--font-sans)", "sans-serif"],
+        rubik: ["var(--font-rubik)", "sans-serif"],
+        nunito: ["var(--font-nunito)", "sans-serif"],
       },
     },
   },
