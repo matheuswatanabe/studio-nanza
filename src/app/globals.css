@@ -49,8 +49,8 @@ body {
 @media (prefers-reduced-motion: no-preference) {
   .fogo-animado {
     display: inline-block;
-    transform-origin: 50% 90%;
-    animation: fogo-flicker 1.6s ease-in-out infinite;
+    transform-origin: 50% 95%;
+    animation: fogo-flicker 1.8s ease-in-out infinite;
   }
 }
 
@@ -69,17 +69,40 @@ body {
 }
 
 @keyframes fogo-flicker {
-  0%,
-  100% {
-    transform: rotate(-6deg) scale(1);
+  0% {
+    transform: scaleX(1) scaleY(1) rotate(-3deg);
+    filter: brightness(1);
   }
-  25% {
-    transform: rotate(5deg) scale(1.08);
+  12% {
+    transform: scaleX(0.94) scaleY(1.08) rotate(2deg);
+    filter: brightness(1.1);
+  }
+  24% {
+    transform: scaleX(1.05) scaleY(0.95) rotate(-4deg);
+    filter: brightness(0.94);
+  }
+  38% {
+    transform: scaleX(0.96) scaleY(1.1) rotate(4deg);
+    filter: brightness(1.15);
   }
   50% {
-    transform: rotate(-3deg) scale(0.95);
+    transform: scaleX(1.03) scaleY(0.96) rotate(-2deg);
+    filter: brightness(0.97);
   }
-  75% {
-    transform: rotate(6deg) scale(1.05);
+  63% {
+    transform: scaleX(0.95) scaleY(1.06) rotate(3deg);
+    filter: brightness(1.08);
+  }
+  76% {
+    transform: scaleX(1.04) scaleY(0.97) rotate(-3deg);
+    filter: brightness(0.95);
+  }
+  88% {
+    transform: scaleX(0.97) scaleY(1.05) rotate(2deg);
+    filter: brightness(1.06);
+  }
+  100% {
+    transform: scaleX(1) scaleY(1) rotate(-3deg);
+    filter: brightness(1);
   }
 }

@@ -36,13 +36,13 @@ function LoginForm() {
     setTimeout(() => {
       router.replace(searchParams.get("redirect") || "/");
       router.refresh();
-    }, 380);
+    }, 550);
   }
 
   return (
     <div
-      className={`relative min-h-screen w-full overflow-hidden bg-[#242424] transition-all duration-[380ms] ease-in ${
-        saindo ? "scale-105 opacity-0" : "scale-100 opacity-100"
+      className={`relative min-h-screen w-full overflow-hidden bg-[#242424] transition-all duration-[550ms] ease-[cubic-bezier(0.4,0,0.2,1)] ${
+        saindo ? "scale-[1.015] opacity-0" : "scale-100 opacity-100"
       }`}
     >
       <Image
@@ -54,8 +54,8 @@ function LoginForm() {
       />
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
 
-      <div className="relative z-10 flex min-h-screen w-full items-center justify-center px-6 py-16">
-        <div className="w-full max-w-lg text-center">
+      <div className="relative z-10 flex min-h-screen w-full items-center justify-center px-4 py-16 sm:px-6">
+        <div className="w-full max-w-2xl text-center">
           <p
             className="brand-panel-fade flex items-center justify-center gap-2 font-nunito text-sm font-bold text-white"
             style={{ "--fd": "0ms" }}
@@ -64,7 +64,7 @@ function LoginForm() {
           </p>
 
           <h1
-            className="brand-panel-fade mt-5 font-rubik text-[clamp(1.9rem,7vw,3.75rem)] font-bold uppercase leading-[1.05] tracking-tight text-white"
+            className="brand-panel-fade mt-5 font-rubik text-[clamp(2.1rem,8vw,4.5rem)] font-bold uppercase leading-[1.05] tracking-tight text-white"
             style={{ "--fd": "90ms" }}
           >
             <span className="block whitespace-nowrap">Where ideas</span>
