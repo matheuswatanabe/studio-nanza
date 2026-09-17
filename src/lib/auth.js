@@ -17,11 +17,24 @@ export const SESSAO_MAX_AGE = 60 * 60 * 24;
 // Usa Web Crypto (disponível tanto no middleware, que roda no Edge Runtime,
 // quanto nas rotas de API, que rodam no Node.js) para gerar um token
 // derivado da senha — em vez de guardar a senha em texto puro no cookie.
-export async function tokenEsperado() {
+async function derivarToken(prefixo) {
   const encoder = new TextEncoder();
-  const data = encoder.encode("studio-auth:" + (process.env.APP_PASSWORD ?? ""));
+  const data = encoder.encode(prefixo + (process.env.APP_PASSWORD ?? ""));
   const hashBuffer = await crypto.subtle.digest("SHA-256", data);
   return Array.from(new Uint8Array(hashBuffer))
     .map((b) => b.toString(16).padStart(2, "0"))
     .join("");
+}
+
+export async function tokenEsperado() {
+  return derivarToken("studio-auth:");
+}
+
+// Token do link de assinatura da agenda (/api/agenda/ics). O Google Agenda
+// busca esse endereço pelos servidores dele, sem cookie nenhum, então a chave
+// precisa viajar na própria URL. O prefixo diferente garante que esse token
+// não sirva como cookie de login — e, por derivar da APP_PASSWORD, trocar a
+// senha do sistema invalida os links de assinatura antigos automaticamente.
+export async function tokenAgenda() {
+  return derivarToken("studio-agenda-feed:");
 }

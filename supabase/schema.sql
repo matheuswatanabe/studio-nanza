@@ -72,3 +72,33 @@ alter table transacoes add column if not exists funcionario text;
 -- junto quando o projeto é excluído — sem afetar transações que o usuário
 -- vinculou manualmente ao projeto.
 alter table transacoes add column if not exists gerado_automaticamente boolean not null default false;
+
+-- ---------------------------------------------------------------------------
+-- Agenda: compromissos do dia (reuniões, gravações, entregas presenciais...).
+-- Rode este bloco no SQL Editor do Supabase para liberar a página /agenda.
+-- Como tudo aqui é "if not exists", dá para rodar o arquivo inteiro de novo
+-- sem medo em bancos que já existem.
+-- ---------------------------------------------------------------------------
+create table if not exists compromissos (
+  id serial primary key,
+  titulo text not null,
+  descricao text,
+  data date not null,
+  -- Quando dia_inteiro = true as duas horas ficam nulas. Quando é false,
+  -- hora_inicio é obrigatória (validado na API) e hora_fim é opcional —
+  -- sem hora_fim o compromisso vale como 1 hora na exportação p/ calendários.
+  hora_inicio time,
+  hora_fim time,
+  dia_inteiro boolean not null default false,
+  local text,
+  cor text not null default 'azul',
+  projeto_id integer references projetos(id) on delete set null,
+  concluido boolean not null default false,
+  criado_por text,
+  criado_em timestamptz not null default now(),
+  -- Usado como DTSTAMP/LAST-MODIFIED no arquivo .ics, para que o Google
+  -- Agenda saiba que um compromisso mudou e atualize a cópia dele.
+  atualizado_em timestamptz not null default now()
+);
+
+create index if not exists compromissos_data_idx on compromissos (data);

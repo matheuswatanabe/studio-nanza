@@ -36,6 +36,10 @@ export async function middleware(request) {
     pathname === "/login" ||
     pathname === "/api/login" ||
     pathname === "/api/logout" ||
+    // O feed .ics da agenda é buscado pelos servidores do Google/Apple, que
+    // não têm como enviar o cookie de sessão. A própria rota valida o token
+    // que vai na URL antes de devolver qualquer compromisso.
+    pathname === "/api/agenda/ics" ||
     pathname.startsWith("/images/")
   ) {
     return NextResponse.next();

@@ -7,6 +7,7 @@ import Avatar from "@/components/Avatar";
 
 const navItems = [
   { label: "Início", href: "/" },
+  { label: "Agenda", href: "/agenda" },
   { label: "Clientes", href: "/clientes" },
   { label: "Projetos", href: "/projetos" },
   { label: "Financeiro", href: "/financeiro" },
