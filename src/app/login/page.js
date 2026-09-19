@@ -46,7 +46,7 @@ function LoginForm() {
       }`}
     >
       <Image
-        src="/images/login-bg.png"
+        src="/images/login-bg.jpg"
         alt=""
         fill
         priority

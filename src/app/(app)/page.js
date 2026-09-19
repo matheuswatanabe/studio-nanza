@@ -66,33 +66,35 @@ async function buscarSemana() {
 }
 
 async function buscarResumo() {
-  const [{ saldo }] = await sql`
-    SELECT COALESCE(SUM(CASE WHEN tipo = 'entrada' THEN valor ELSE -valor END), 0) AS saldo
-    FROM transacoes
-  `;
-
-  const [{ receitames: receitaMes }] = await sql`
-    SELECT COALESCE(SUM(valor), 0) AS receitaMes
-    FROM transacoes
-    WHERE tipo = 'entrada' AND to_char(data, 'YYYY-MM') = to_char(CURRENT_DATE, 'YYYY-MM')
-  `;
-
-  const [{ totalclientes: totalClientes }] = await sql`
-    SELECT COUNT(*) AS totalClientes FROM clientes
-  `;
-
-  const [{ totalprojetosandamento: totalProjetosAndamento }] = await sql`
-    SELECT COUNT(*) AS totalProjetosAndamento FROM projetos WHERE status != 'Finalizado'
-  `;
-
-  const projetosProximos = await sql`
-    SELECT projetos.*, COALESCE(clientes.empresa, clientes.nome) AS cliente_nome,
-      projetos.prazo_entrega < CURRENT_DATE AS atrasado
-    FROM projetos
-    JOIN clientes ON clientes.id = projetos.cliente_id
-    WHERE projetos.status != 'Finalizado' AND projetos.prazo_entrega IS NOT NULL
-    ORDER BY projetos.prazo_entrega ASC
-  `;
+  // As consultas não dependem umas das outras, então vão ao banco ao mesmo
+  // tempo: a página espera só pela mais lenta, não pela soma de todas.
+  const [
+    [{ saldo }],
+    [{ receitames: receitaMes }],
+    [{ totalclientes: totalClientes }],
+    [{ totalprojetosandamento: totalProjetosAndamento }],
+    projetosProximos,
+  ] = await Promise.all([
+    sql`
+      SELECT COALESCE(SUM(CASE WHEN tipo = 'entrada' THEN valor ELSE -valor END), 0) AS saldo
+      FROM transacoes
+    `,
+    sql`
+      SELECT COALESCE(SUM(valor), 0) AS receitaMes
+      FROM transacoes
+      WHERE tipo = 'entrada' AND to_char(data, 'YYYY-MM') = to_char(CURRENT_DATE, 'YYYY-MM')
+    `,
+    sql`SELECT COUNT(*) AS totalClientes FROM clientes`,
+    sql`SELECT COUNT(*) AS totalProjetosAndamento FROM projetos WHERE status != 'Finalizado'`,
+    sql`
+      SELECT projetos.*, COALESCE(clientes.empresa, clientes.nome) AS cliente_nome,
+        projetos.prazo_entrega < CURRENT_DATE AS atrasado
+      FROM projetos
+      JOIN clientes ON clientes.id = projetos.cliente_id
+      WHERE projetos.status != 'Finalizado' AND projetos.prazo_entrega IS NOT NULL
+      ORDER BY projetos.prazo_entrega ASC
+    `,
+  ]);
 
   return {
     saldo,
@@ -127,19 +129,17 @@ function agruparPorMes(projetos) {
 }
 
 export default async function Home() {
-  const {
-    saldo,
-    receitaMes,
-    totalClientes,
-    totalProjetosAndamento,
-    projetosPorMes,
-  } = await buscarResumo();
-
-  // A tela de Início é a porta de entrada do sistema: se a tabela de
-  // compromissos ainda não tiver sido criada no banco (o bloco da agenda em
-  // supabase/schema.sql roda à mão), o certo é o card avisar — não a página
-  // inteira quebrar.
-  const semana = await buscarSemana().catch(() => null);
+  const [
+    { saldo, receitaMes, totalClientes, totalProjetosAndamento, projetosPorMes },
+    semana,
+  ] = await Promise.all([
+    buscarResumo(),
+    // A tela de Início é a porta de entrada do sistema: se a tabela de
+    // compromissos ainda não tiver sido criada no banco (o bloco da agenda em
+    // supabase/schema.sql roda à mão), o certo é o card avisar — não a página
+    // inteira quebrar.
+    buscarSemana().catch(() => null),
+  ]);
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-8 sm:px-8 sm:py-10">

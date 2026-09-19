@@ -2,29 +2,10 @@ import { NextResponse } from "next/server";
 import { sql, STATUS_PROJETO, TIPOS_SERVICO, resolverOuCriarCliente } from "@/lib/db";
 import { perfilAtual } from "@/lib/perfil";
 import { PERFIS } from "@/lib/auth";
+import { listarProjetos } from "@/lib/consultas";
 
 export async function GET() {
-  const projetos = await sql`
-    SELECT projetos.*, COALESCE(clientes.empresa, clientes.nome) AS cliente_nome
-    FROM projetos
-    JOIN clientes ON clientes.id = projetos.cliente_id
-    ORDER BY
-      CASE WHEN projetos.prazo_entrega IS NULL THEN 1 ELSE 0 END,
-      projetos.prazo_entrega ASC
-  `;
-
-  const entregaveis = await sql`SELECT * FROM entregaveis ORDER BY id ASC`;
-
-  const projetosComEntregaveis = projetos.map((projeto) => ({
-    ...projeto,
-    // Alguns registros antigos guardaram tipos_servico como uma string em
-    // vez de um array (jsonb salvo errado). Normaliza aqui para o front
-    // nunca quebrar tentando chamar .map/.includes numa string.
-    tipos_servico: Array.isArray(projeto.tipos_servico) ? projeto.tipos_servico : [],
-    entregaveis: entregaveis.filter((e) => e.projeto_id === projeto.id),
-  }));
-
-  return NextResponse.json(projetosComEntregaveis);
+  return NextResponse.json(await listarProjetos());
 }
 
 function validarCampos(body) {

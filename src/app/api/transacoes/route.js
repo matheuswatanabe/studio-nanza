@@ -1,17 +1,10 @@
 import { NextResponse } from "next/server";
 import { sql, CATEGORIAS_DESPESA, STATUS_PAGAMENTO } from "@/lib/db";
 import { perfilAtual } from "@/lib/perfil";
+import { listarTransacoes } from "@/lib/consultas";
 
 export async function GET() {
-  const transacoes = await sql`
-    SELECT transacoes.*, projetos.nome AS projeto_nome, projetos.status AS projeto_status,
-      COALESCE(clientes.empresa, clientes.nome) AS cliente_empresa
-    FROM transacoes
-    LEFT JOIN projetos ON projetos.id = transacoes.projeto_id
-    LEFT JOIN clientes ON clientes.id = projetos.cliente_id
-    ORDER BY data DESC, transacoes.id DESC
-  `;
-  return NextResponse.json(transacoes);
+  return NextResponse.json(await listarTransacoes());
 }
 
 function validar(body) {

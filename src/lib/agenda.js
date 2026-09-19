@@ -22,16 +22,20 @@ export const CORES_COMPROMISSO = [
 
 export const VALORES_COR = CORES_COMPROMISSO.map((c) => c.valor);
 
-const doisDigitos = (n) => String(n).padStart(2, "0");
+// Data de hoje em "AAAA-MM-DD" no horário de Brasília — igual no servidor e
+// no navegador. Não dá para usar toISOString() (UTC: das 21h em diante já
+// seria o dia seguinte), nem o relógio local puro: o servidor da Vercel roda
+// em UTC, e a página renderizada lá precisa marcar o mesmo "hoje" que o
+// navegador vai marcar ao assumir a tela. O formato en-CA é AAAA-MM-DD.
+const formatoDataBrasilia = new Intl.DateTimeFormat("en-CA", {
+  timeZone: FUSO,
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+});
 
-// Data de hoje em "AAAA-MM-DD" usando o relógio local do aparelho. Não dá
-// para usar toISOString() aqui: ele converte para UTC e, das 21h em diante
-// no Brasil, já devolveria o dia seguinte.
 export function hojeISO() {
-  const agora = new Date();
-  return `${agora.getFullYear()}-${doisDigitos(agora.getMonth() + 1)}-${doisDigitos(
-    agora.getDate()
-  )}`;
+  return formatoDataBrasilia.format(new Date());
 }
 
 export function ehDataISO(valor) {

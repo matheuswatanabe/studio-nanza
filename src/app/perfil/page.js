@@ -45,7 +45,7 @@ function PerfilForm() {
   return (
     <div className="relative min-h-screen w-full overflow-hidden bg-[#242424]">
       <Image
-        src="/images/selecao-bg.png"
+        src="/images/selecao-bg.jpg"
         alt=""
         fill
         priority
@@ -89,6 +89,10 @@ function PerfilForm() {
                       src={AVATAR_CARD[perfil]}
                       alt={perfil}
                       fill
+                      // O card tem no máximo ~260px de largura (3 colunas);
+                      // no celular vira 1 coluna. Sem isto o Next assume
+                      // tela cheia e o navegador baixa a foto em 1920px.
+                      sizes="(min-width: 640px) 260px, 100vw"
                       className="object-cover transition-transform duration-300 ease-out group-hover:scale-110"
                     />
                     <span className="pointer-events-none absolute inset-0 rounded-b-[20px] ring-0 ring-[#ffc928] transition-all duration-300 group-hover:ring-4" />

@@ -1,18 +1,13 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import Link from "next/link";
 import { formatarData, hojeISO } from "@/lib/agenda";
+import GradeMes from "@/components/agenda/GradeMes";
 import ModalCompromisso from "@/components/agenda/ModalCompromisso";
+import PainelDia from "@/components/agenda/PainelDia";
 import PainelSincronizacao from "@/components/agenda/PainelSincronizacao";
-import {
-  DIAS_SEMANA,
-  estiloDe,
-  faixaDeHorario,
-  gradeDoMes,
-  rotuloDia,
-  rotuloMes,
-} from "@/components/agenda/estilos";
+import VisaoLista from "@/components/agenda/VisaoLista";
+import { gradeDoMes, rotuloMes } from "@/components/agenda/estilos";
 
 const FORM_INICIAL = {
   titulo: "",
@@ -42,63 +37,14 @@ function formDoCompromisso(compromisso) {
 
 /* ------------------------------------------------------------------ */
 
-function Chip({ compromisso, onAbrir, onArrastar, onFimArrasto, arrastando }) {
-  const estilo = estiloDe(compromisso.cor);
-
-  return (
-    <button
-      type="button"
-      draggable
-      onDragStart={(e) => onArrastar(e, compromisso)}
-      onDragEnd={onFimArrasto}
-      onClick={(e) => {
-        e.stopPropagation();
-        onAbrir(compromisso);
-      }}
-      title={`${faixaDeHorario(compromisso)} · ${compromisso.titulo}`}
-      className={`flex w-full cursor-grab items-center gap-1.5 rounded-md px-1.5 py-1 text-left text-[11px] leading-tight ring-1 transition active:cursor-grabbing ${
-        estilo.chip
-      } ${arrastando ? "opacity-40" : ""} ${
-        compromisso.concluido ? "line-through opacity-60" : ""
-      }`}
-    >
-      <span className={`h-1.5 w-1.5 shrink-0 rounded-full ${estilo.ponto}`} />
-      {!compromisso.dia_inteiro && compromisso.hora_inicio && (
-        <span className="shrink-0 font-medium tabular-nums">
-          {compromisso.hora_inicio}
-        </span>
-      )}
-      <span className="truncate">{compromisso.titulo}</span>
-    </button>
-  );
-}
-
-function ChipPrazo({ prazo }) {
-  return (
-    <Link
-      href="/projetos"
-      onClick={(e) => e.stopPropagation()}
-      title={`Entrega do projeto ${prazo.titulo}${
-        prazo.cliente_nome ? ` — ${prazo.cliente_nome}` : ""
-      }`}
-      className="flex w-full items-center gap-1.5 rounded-md border border-dashed border-neutral-300 px-1.5 py-1 text-left text-[11px] leading-tight text-neutral-500 transition hover:border-neutral-400 hover:text-neutral-700"
-    >
-      <span className="shrink-0">◇</span>
-      <span className="truncate">{prazo.titulo}</span>
-    </Link>
-  );
-}
-
-/* ------------------------------------------------------------------ */
-
-export default function Agenda({ urlFeed, retornoGoogle }) {
+export default function Agenda({ urlFeed, retornoGoogle, dadosIniciais }) {
   const hoje = hojeISO();
 
-  const [compromissos, setCompromissos] = useState([]);
-  const [projetos, setProjetos] = useState([]);
-  const [carregando, setCarregando] = useState(true);
-  const [erroGeral, setErroGeral] = useState("");
-  const [google, setGoogle] = useState(null);
+  const [compromissos, setCompromissos] = useState(dadosIniciais.compromissos);
+  const [projetos, setProjetos] = useState(dadosIniciais.projetos);
+  const [carregando, setCarregando] = useState(false);
+  const [erroGeral, setErroGeral] = useState(dadosIniciais.erro);
+  const [google, setGoogle] = useState(dadosIniciais.google);
 
   // Só faz sentido marcar algo como "não sincronizado" se existe uma conta
   // Google conectada funcionando.
@@ -176,7 +122,6 @@ export default function Agenda({ urlFeed, retornoGoogle }) {
   }
 
   useEffect(() => {
-    recarregarTudo();
     // Tira o ?google=... da barra de endereço depois de ler, para um F5 não
     // repetir o aviso nem o envio automático.
     if (retornoGoogle) window.history.replaceState(null, "", "/agenda");
@@ -586,281 +531,46 @@ export default function Agenda({ urlFeed, retornoGoogle }) {
               Carregando a agenda...
             </p>
           ) : visao === "mes" ? (
-            <>
-              <div className="grid grid-cols-7 gap-1 pb-2">
-                {DIAS_SEMANA.map((dia) => (
-                  <span
-                    key={dia}
-                    className="px-1 text-center text-[11px] font-medium uppercase tracking-wide text-neutral-400"
-                  >
-                    {dia}
-                  </span>
-                ))}
-              </div>
-
-              <div className="grid grid-cols-7 gap-1">
-                {semanas.flat().map((dia) => {
-                  const itens = doDia(dia.iso);
-                  const total = itens.compromissos.length + itens.prazos.length;
-                  const visiveisNoDia = itens.compromissos.slice(0, 3);
-                  const restantes = total - visiveisNoDia.length;
-                  const ehHoje = dia.iso === hoje;
-                  const selecionado = dia.iso === diaSelecionado;
-
-                  return (
-                    <div
-                      key={dia.iso}
-                      onClick={() => setDiaSelecionado(dia.iso)}
-                      onDoubleClick={() => abrirNovo(dia.iso)}
-                      onDragOver={(e) => {
-                        if (arrastandoId === null) return;
-                        e.preventDefault();
-                        e.dataTransfer.dropEffect = "move";
-                        setDiaAlvo(dia.iso);
-                      }}
-                      onDragLeave={() =>
-                        setDiaAlvo((atual) => (atual === dia.iso ? null : atual))
-                      }
-                      onDrop={(e) => soltarNoDia(e, dia.iso)}
-                      className={`flex min-h-[5.5rem] cursor-pointer flex-col gap-1 rounded-lg border p-1.5 transition sm:min-h-[7rem] ${
-                        dia.doMes ? "bg-white" : "bg-neutral-50/60"
-                      } ${
-                        diaAlvo === dia.iso
-                          ? "border-neutral-900 ring-2 ring-neutral-900/10"
-                          : selecionado
-                            ? "border-neutral-900"
-                            : "border-neutral-200 hover:border-neutral-300"
-                      }`}
-                    >
-                      <div className="flex items-center justify-between">
-                        <span
-                          className={`flex h-6 min-w-6 items-center justify-center rounded-full px-1 text-xs font-medium ${
-                            ehHoje
-                              ? "bg-neutral-900 text-white"
-                              : dia.doMes
-                                ? "text-neutral-700"
-                                : "text-neutral-300"
-                          }`}
-                        >
-                          {dia.numero}
-                        </span>
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            abrirNovo(dia.iso);
-                          }}
-                          aria-label={`Novo compromisso em ${formatarData(dia.iso)}`}
-                          className="flex h-5 w-5 items-center justify-center rounded text-sm text-neutral-300 transition hover:bg-neutral-100 hover:text-neutral-700"
-                        >
-                          +
-                        </button>
-                      </div>
-
-                      <div className="flex flex-col gap-1">
-                        {visiveisNoDia.map((c) => (
-                          <Chip
-                            key={c.id}
-                            compromisso={c}
-                            onAbrir={abrirEdicao}
-                            onArrastar={iniciarArrasto}
-                            onFimArrasto={encerrarArrasto}
-                            arrastando={arrastandoId === c.id}
-                          />
-                        ))}
-                        {visiveisNoDia.length === itens.compromissos.length &&
-                          itens.prazos
-                            .slice(0, 3 - visiveisNoDia.length)
-                            .map((p) => <ChipPrazo key={p.id} prazo={p} />)}
-                        {restantes > 0 && (
-                          <span className="px-1 text-[11px] font-medium text-neutral-400">
-                            +{restantes} no dia
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-
-              <p className="mt-3 px-1 text-[11px] text-neutral-400">
-                Clique num dia para ver os detalhes ao lado, dois cliques para
-                criar. Arraste um compromisso para outro dia para remarcá-lo. As
-                setas ← → trocam de mês e a tecla T volta para hoje.
-              </p>
-            </>
+            <GradeMes
+              semanas={semanas}
+              doDia={doDia}
+              hoje={hoje}
+              diaSelecionado={diaSelecionado}
+              setDiaSelecionado={setDiaSelecionado}
+              diaAlvo={diaAlvo}
+              setDiaAlvo={setDiaAlvo}
+              arrastandoId={arrastandoId}
+              abrirNovo={abrirNovo}
+              abrirEdicao={abrirEdicao}
+              iniciarArrasto={iniciarArrasto}
+              encerrarArrasto={encerrarArrasto}
+              soltarNoDia={soltarNoDia}
+            />
           ) : (
-            <div className="divide-y divide-neutral-100">
-              {diasDoMesComItens.length === 0 ? (
-                <p className="px-2 py-16 text-center text-sm text-neutral-400">
-                  Nenhum compromisso em {rotuloMes(ano, mes).toLowerCase()}.
-                </p>
-              ) : (
-                diasDoMesComItens.map(([iso, itens]) => (
-                  <div key={iso} className="flex flex-col gap-2 py-4 sm:flex-row sm:gap-5">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setDiaSelecionado(iso);
-                        setVisao("mes");
-                      }}
-                      className="w-full shrink-0 text-left sm:w-44"
-                    >
-                      <span
-                        className={`text-sm font-medium ${
-                          iso === hoje ? "text-neutral-900" : "text-neutral-600"
-                        }`}
-                      >
-                        {rotuloDia(iso)}
-                      </span>
-                      {iso === hoje && (
-                        <span className="ml-2 rounded bg-neutral-900 px-1.5 py-0.5 text-[10px] font-medium text-white">
-                          hoje
-                        </span>
-                      )}
-                    </button>
-
-                    <div className="flex min-w-0 flex-1 flex-col gap-2">
-                      {itens.compromissos.map((c) => {
-                        const estilo = estiloDe(c.cor);
-                        return (
-                          <button
-                            key={c.id}
-                            type="button"
-                            onClick={() => abrirEdicao(c)}
-                            className="flex items-start gap-3 rounded-lg border border-neutral-200 p-3 text-left transition hover:border-neutral-300"
-                          >
-                            <span
-                              className={`mt-0.5 h-8 w-1 shrink-0 rounded-full ${estilo.solido}`}
-                            />
-                            <span className="min-w-0 flex-1">
-                              <span
-                                className={`block text-sm font-medium text-neutral-900 ${
-                                  c.concluido ? "line-through text-neutral-400" : ""
-                                }`}
-                              >
-                                {c.titulo}
-                              </span>
-                              <span className="mt-0.5 block text-xs text-neutral-500">
-                                {faixaDeHorario(c)}
-                                {c.local ? ` · ${c.local}` : ""}
-                                {c.projeto_nome ? ` · ${c.projeto_nome}` : ""}
-                              </span>
-                              {c.descricao && (
-                                <span className="mt-1 block whitespace-pre-line text-xs text-neutral-500">
-                                  {c.descricao}
-                                </span>
-                              )}
-                            </span>
-                          </button>
-                        );
-                      })}
-                      {itens.prazos.map((p) => (
-                        <ChipPrazo key={p.id} prazo={p} />
-                      ))}
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
+            <VisaoLista
+              diasDoMesComItens={diasDoMesComItens}
+              ano={ano}
+              mes={mes}
+              hoje={hoje}
+              setDiaSelecionado={setDiaSelecionado}
+              setVisao={setVisao}
+              abrirEdicao={abrirEdicao}
+            />
           )}
         </div>
 
-        {/* Painel do dia selecionado */}
-        <aside className="rounded-xl border border-neutral-200 bg-white p-4 lg:sticky lg:top-6 lg:self-start">
-          <p className="text-xs font-medium uppercase tracking-wide text-neutral-400">
-            {diaSelecionado === hoje ? "Hoje" : "Dia selecionado"}
-          </p>
-          <h2 className="mt-1 text-sm font-semibold text-neutral-900">
-            {rotuloDia(diaSelecionado)}
-          </h2>
-
-          <button
-            type="button"
-            onClick={() => abrirNovo(diaSelecionado)}
-            className="mt-3 w-full rounded-lg border border-dashed border-neutral-300 px-3 py-2 text-sm font-medium text-neutral-600 transition hover:border-neutral-400 hover:bg-neutral-50"
-          >
-            + Adicionar neste dia
-          </button>
-
-          <div className="mt-4 flex flex-col gap-2">
-            {itensDoDiaSelecionado.compromissos.length === 0 &&
-              itensDoDiaSelecionado.prazos.length === 0 && (
-                <p className="py-6 text-center text-xs text-neutral-400">
-                  Nenhum compromisso neste dia.
-                </p>
-              )}
-
-            {itensDoDiaSelecionado.compromissos.map((c) => {
-              const estilo = estiloDe(c.cor);
-              return (
-                <div
-                  key={c.id}
-                  className="flex items-start gap-2 rounded-lg border border-neutral-200 p-2.5"
-                >
-                  <input
-                    type="checkbox"
-                    checked={c.concluido}
-                    onChange={() => alternarConcluido(c)}
-                    aria-label={`Marcar “${c.titulo}” como concluído`}
-                    className="mt-0.5 h-4 w-4 shrink-0 rounded border-neutral-300 accent-neutral-900"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => abrirEdicao(c)}
-                    className="min-w-0 flex-1 text-left"
-                  >
-                    <span className="flex items-center gap-1.5">
-                      <span
-                        className={`h-1.5 w-1.5 shrink-0 rounded-full ${estilo.ponto}`}
-                      />
-                      <span
-                        className={`truncate text-sm font-medium ${
-                          c.concluido
-                            ? "text-neutral-400 line-through"
-                            : "text-neutral-900"
-                        }`}
-                      >
-                        {c.titulo}
-                      </span>
-                    </span>
-                    <span className="mt-0.5 block text-xs text-neutral-500">
-                      {faixaDeHorario(c)}
-                      {c.local ? ` · ${c.local}` : ""}
-                    </span>
-                    {c.descricao && (
-                      <span className="mt-1 block whitespace-pre-line text-xs text-neutral-500">
-                        {c.descricao}
-                      </span>
-                    )}
-                    {c.projeto_nome && (
-                      <span className="mr-1 mt-1 inline-block rounded bg-neutral-100 px-1.5 py-0.5 text-[10px] font-medium text-neutral-600">
-                        {c.projeto_nome}
-                      </span>
-                    )}
-                    {naoSincronizado(c) && (
-                      <span
-                        title={c.google_erro ?? "Ainda não enviado ao Google Agenda"}
-                        className="mt-1 inline-block rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-medium text-amber-800"
-                      >
-                        não sincronizado
-                      </span>
-                    )}
-                  </button>
-                </div>
-              );
-            })}
-
-            {itensDoDiaSelecionado.prazos.map((p) => (
-              <ChipPrazo key={p.id} prazo={p} />
-            ))}
-          </div>
-
-          <p className="mt-4 border-t border-neutral-200 pt-3 text-xs text-neutral-400">
-            {totalDoMes} compromisso{totalDoMes === 1 ? "" : "s"} em{" "}
-            {rotuloMes(ano, mes).toLowerCase()}.
-          </p>
-        </aside>
+        <PainelDia
+          diaSelecionado={diaSelecionado}
+          hoje={hoje}
+          itensDoDiaSelecionado={itensDoDiaSelecionado}
+          totalDoMes={totalDoMes}
+          ano={ano}
+          mes={mes}
+          abrirNovo={abrirNovo}
+          abrirEdicao={abrirEdicao}
+          alternarConcluido={alternarConcluido}
+          naoSincronizado={naoSincronizado}
+        />
       </div>
 
       <PainelSincronizacao
