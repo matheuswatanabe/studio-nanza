@@ -232,6 +232,21 @@ export default function PainelSincronizacao({ urlFeed, google, retornoGoogle, on
               >
                 {google.erro ? "Reconectar conta Google" : "Conectar conta Google"}
               </a>
+              <details className="mt-3 text-xs">
+                <summary className="cursor-pointer text-neutral-500 hover:text-neutral-800">
+                  O Google mostrou “redirect_uri_mismatch”?
+                </summary>
+                <p className="mt-2 leading-relaxed">
+                  O endereço abaixo precisa estar cadastrado{" "}
+                  <strong>exatamente igual</strong> no Google Cloud, em Clientes →
+                  “URIs de redirecionamento autorizados”. Ele muda conforme o
+                  domínio pelo qual você abriu o site — use sempre o mesmo.
+                </p>
+                <CampoCopiavel
+                  valor={google.uriDeRetorno}
+                  rotulo="URI de redirecionamento para cadastrar no Google Cloud"
+                />
+              </details>
               <p className="mt-3 rounded-lg bg-amber-50 px-3 py-2 text-xs leading-relaxed text-amber-800">
                 O Google vai mostrar um aviso de “app não verificado”. É esperado:
                 o app é de uso interno do studio e não passou pela revisão
