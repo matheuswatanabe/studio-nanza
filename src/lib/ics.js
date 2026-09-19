@@ -2,7 +2,13 @@
 // É o formato que Google Agenda, Apple Calendário e Outlook entendem — tanto
 // para assinar a agenda inteira por URL quanto para baixar um compromisso
 // avulso e abrir no celular.
-import { FUSO, dataCompacta, horaCompacta, intervaloDoCompromisso } from "@/lib/agenda";
+import {
+  FUSO,
+  dataCompacta,
+  detalhesDoCompromisso,
+  horaCompacta,
+  intervaloDoCompromisso,
+} from "@/lib/agenda";
 
 // Caracteres com significado especial no formato precisam ser escapados, e a
 // quebra de linha vira o literal "\n".
@@ -88,13 +94,7 @@ function evento(compromisso, { dominio }) {
   const titulo = compromisso.concluido ? `✔ ${compromisso.titulo}` : compromisso.titulo;
   linhas.push(`SUMMARY:${escapar(titulo)}`);
 
-  const descricao = [
-    compromisso.descricao,
-    compromisso.projeto_nome && `Projeto: ${compromisso.projeto_nome}`,
-    compromisso.criado_por && `Lançado por: ${compromisso.criado_por}`,
-  ]
-    .filter(Boolean)
-    .join("\n\n");
+  const descricao = detalhesDoCompromisso(compromisso);
   if (descricao) linhas.push(`DESCRIPTION:${escapar(descricao)}`);
   if (compromisso.local) linhas.push(`LOCATION:${escapar(compromisso.local)}`);
 

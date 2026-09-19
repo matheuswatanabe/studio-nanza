@@ -1,14 +1,13 @@
 import { NextResponse } from "next/server";
 import { sql } from "@/lib/db";
-import {
-  listarCompromissos,
-  projetoExiste,
-  validarCompromisso,
-} from "@/lib/compromissos";
+import { projetoExiste, validarCompromisso } from "@/lib/compromissos";
 import { ehDataISO } from "@/lib/agenda";
+import { espelharCompromisso, removerDoGoogle } from "@/lib/google";
 
 async function buscarExistente(id) {
-  const [existente] = await sql`SELECT id FROM compromissos WHERE id = ${id}`;
+  const [existente] = await sql`
+    SELECT id, google_event_id, google_calendar_id FROM compromissos WHERE id = ${id}
+  `;
   return existente ?? null;
 }
 
@@ -46,7 +45,7 @@ export async function PUT(request, { params }) {
     WHERE id = ${id}
   `;
 
-  const [compromisso] = await listarCompromissos({ id });
+  const compromisso = await espelharCompromisso(id);
 
   return NextResponse.json(compromisso);
 }
@@ -86,19 +85,24 @@ export async function PATCH(request, { params }) {
     WHERE id = ${id}
   `;
 
-  const [compromisso] = await listarCompromissos({ id });
+  const compromisso = await espelharCompromisso(id);
 
   return NextResponse.json(compromisso);
 }
 
 export async function DELETE(request, { params }) {
   const id = Number(params.id);
+  const existente = await buscarExistente(id);
 
-  if (!(await buscarExistente(id))) {
+  if (!existente) {
     return NextResponse.json({ error: "Compromisso não encontrado." }, { status: 404 });
   }
 
   await sql`DELETE FROM compromissos WHERE id = ${id}`;
 
-  return NextResponse.json({ ok: true });
+  // Apaga do site primeiro: se o Google falhar, o compromisso não pode
+  // continuar "vivo" aqui só por causa disso. O aviso vai para a tela.
+  const aviso = await removerDoGoogle(existente);
+
+  return NextResponse.json({ ok: true, aviso });
 }

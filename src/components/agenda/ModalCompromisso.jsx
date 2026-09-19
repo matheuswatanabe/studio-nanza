@@ -10,6 +10,7 @@ export default function ModalCompromisso({
   setForm,
   projetos,
   compromisso,
+  googleAtivo,
   salvando,
   excluindo,
   erro,
@@ -218,6 +219,25 @@ export default function ModalCompromisso({
             <p className="text-xs font-medium uppercase tracking-wide text-neutral-400">
               Levar para o celular
             </p>
+
+            {googleAtivo && (
+              <p
+                className={`mt-2 rounded-lg px-3 py-2 text-xs leading-relaxed ${
+                  compromisso.google_erro
+                    ? "bg-amber-50 text-amber-800"
+                    : compromisso.google_event_id
+                      ? "bg-emerald-50 text-emerald-800"
+                      : "bg-neutral-100 text-neutral-600"
+                }`}
+              >
+                {compromisso.google_erro
+                  ? `Não foi enviado ao Google Agenda: ${compromisso.google_erro} Salvar de novo tenta outra vez.`
+                  : compromisso.google_event_id
+                    ? "✓ Já está no Google Agenda — alterações salvas aqui vão para lá na hora."
+                    : "Ainda não foi enviado ao Google Agenda. Salvar tenta enviar."}
+              </p>
+            )}
+
             <div className="mt-2 flex flex-wrap gap-2">
               <a
                 href={linkGoogleAgenda(compromisso)}

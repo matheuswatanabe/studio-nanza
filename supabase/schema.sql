@@ -102,3 +102,39 @@ create table if not exists compromissos (
 );
 
 create index if not exists compromissos_data_idx on compromissos (data);
+
+-- Segurança: igual às demais tabelas, RLS ligado e nenhuma policy. Assim a
+-- API REST pública do Supabase (chave anon) não lê nem altera compromissos;
+-- o site conecta como `postgres`, que ignora RLS, e continua funcionando.
+alter table compromissos enable row level security;
+
+-- ---------------------------------------------------------------------------
+-- Integração com o Google Agenda (envio instantâneo via API do Google).
+-- ---------------------------------------------------------------------------
+
+-- Em qual agenda do Google cada compromisso já foi publicado. Guardar a
+-- agenda junto com o evento permite detectar quando a conta conectada mudou
+-- (evento antigo aponta para outra agenda) e publicar de novo na certa.
+alter table compromissos add column if not exists google_event_id text;
+alter table compromissos add column if not exists google_calendar_id text;
+-- Último erro ao enviar para o Google; nulo quando está sincronizado.
+alter table compromissos add column if not exists google_erro text;
+
+-- Uma única linha (id = 1): a conta Google do studio conectada ao site.
+-- refresh_token nulo = desconectado; calendario_id fica guardado mesmo assim,
+-- para reaproveitar a mesma agenda "Studio Nanza" se a conta for reconectada.
+create table if not exists integracao_google (
+  id integer primary key default 1 check (id = 1),
+  email text,
+  refresh_token text,
+  calendario_id text,
+  conectado_por text,
+  conectado_em timestamptz,
+  -- Preenchido quando o Google recusa o token (acesso revogado/expirado):
+  -- o site para de tentar e pede para reconectar.
+  erro text
+);
+
+-- O refresh_token dá acesso à agenda do Google — nunca pode ficar exposto
+-- pela API pública do Supabase.
+alter table integracao_google enable row level security;

@@ -91,13 +91,19 @@ function ChipPrazo({ prazo }) {
 
 /* ------------------------------------------------------------------ */
 
-export default function Agenda({ urlFeed }) {
+export default function Agenda({ urlFeed, retornoGoogle }) {
   const hoje = hojeISO();
 
   const [compromissos, setCompromissos] = useState([]);
   const [projetos, setProjetos] = useState([]);
   const [carregando, setCarregando] = useState(true);
   const [erroGeral, setErroGeral] = useState("");
+  const [google, setGoogle] = useState(null);
+
+  // Só faz sentido marcar algo como "não sincronizado" se existe uma conta
+  // Google conectada funcionando.
+  const googleAtivo = Boolean(google?.conectado && !google.erro);
+  const naoSincronizado = (c) => googleAtivo && (c.google_erro || !c.google_event_id);
 
   const [ano, setAno] = useState(() => Number(hoje.slice(0, 4)));
   const [mes, setMes] = useState(() => Number(hoje.slice(5, 7)));
@@ -123,7 +129,8 @@ export default function Agenda({ urlFeed }) {
   function mostrarAviso(texto) {
     setAviso(texto);
     clearTimeout(avisoTimer.current);
-    avisoTimer.current = setTimeout(() => setAviso(""), 3500);
+    // Avisos longos (erros do Google) ficam mais tempo, para dar para ler.
+    avisoTimer.current = setTimeout(() => setAviso(""), texto.length > 80 ? 8000 : 3500);
   }
 
   useEffect(() => () => clearTimeout(avisoTimer.current), []);
@@ -152,8 +159,27 @@ export default function Agenda({ urlFeed }) {
     setCarregando(false);
   }
 
-  useEffect(() => {
+  // O status do Google é carregado à parte: se a consulta falhar (tabela da
+  // integração ainda não criada, por exemplo), a agenda continua funcionando.
+  async function carregarStatusGoogle() {
+    try {
+      const res = await fetch("/api/google");
+      setGoogle(res.ok ? await res.json() : { configurado: false, conectado: false, uriDeRetorno: "" });
+    } catch {
+      setGoogle({ configurado: false, conectado: false, uriDeRetorno: "" });
+    }
+  }
+
+  function recarregarTudo() {
     carregarDados();
+    carregarStatusGoogle();
+  }
+
+  useEffect(() => {
+    recarregarTudo();
+    // Tira o ?google=... da barra de endereço depois de ler, para um F5 não
+    // repetir o aviso nem o envio automático.
+    if (retornoGoogle) window.history.replaceState(null, "", "/agenda");
   }, []);
 
   /* --- navegação -------------------------------------------------- */
@@ -310,11 +336,18 @@ export default function Agenda({ urlFeed }) {
     );
     setDiaSelecionado(salvo.data);
     fecharModal();
+
+    const base = criando
+      ? `Compromisso criado em ${formatarData(salvo.data)}`
+      : "Compromisso atualizado";
     mostrarAviso(
-      criando
-        ? `Compromisso criado em ${formatarData(salvo.data)}.`
-        : "Compromisso atualizado."
+      !googleAtivo
+        ? `${base}.`
+        : salvo.google_erro
+          ? `${base} no site, mas não foi para o Google Agenda: ${salvo.google_erro}`
+          : `${base} e enviado ao Google Agenda.`
     );
+    if (googleAtivo) carregarStatusGoogle();
   }
 
   async function excluir() {
@@ -332,9 +365,10 @@ export default function Agenda({ urlFeed }) {
       return;
     }
 
+    const { aviso: avisoGoogle } = await res.json().catch(() => ({}));
     setCompromissos((atuais) => atuais.filter((c) => c.id !== id));
     fecharModal();
-    mostrarAviso("Compromisso excluído.");
+    mostrarAviso(avisoGoogle ?? "Compromisso excluído.");
   }
 
   /* --- gestos rápidos (otimistas) --------------------------------- */
@@ -360,6 +394,19 @@ export default function Agenda({ urlFeed }) {
         )
       );
       mostrarAviso("Não foi possível atualizar o compromisso.");
+      return;
+    }
+
+    // A resposta traz o estado da sincronização com o Google atualizado.
+    substituirPelaVersaoDoServidor(await res.json());
+  }
+
+  function substituirPelaVersaoDoServidor(atualizado) {
+    setCompromissos((atuais) =>
+      atuais.map((c) => (c.id === atualizado.id ? atualizado : c))
+    );
+    if (googleAtivo && atualizado.google_erro) {
+      mostrarAviso(`Salvo no site, mas não foi para o Google Agenda: ${atualizado.google_erro}`);
     }
   }
 
@@ -389,6 +436,7 @@ export default function Agenda({ urlFeed }) {
     }
 
     mostrarAviso(`“${compromisso.titulo}” movido para ${formatarData(novaData)}.`);
+    substituirPelaVersaoDoServidor(await res.json());
   }
 
   function iniciarArrasto(e, compromisso) {
@@ -786,8 +834,16 @@ export default function Agenda({ urlFeed }) {
                       </span>
                     )}
                     {c.projeto_nome && (
-                      <span className="mt-1 inline-block rounded bg-neutral-100 px-1.5 py-0.5 text-[10px] font-medium text-neutral-600">
+                      <span className="mr-1 mt-1 inline-block rounded bg-neutral-100 px-1.5 py-0.5 text-[10px] font-medium text-neutral-600">
                         {c.projeto_nome}
+                      </span>
+                    )}
+                    {naoSincronizado(c) && (
+                      <span
+                        title={c.google_erro ?? "Ainda não enviado ao Google Agenda"}
+                        className="mt-1 inline-block rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-medium text-amber-800"
+                      >
+                        não sincronizado
                       </span>
                     )}
                   </button>
@@ -807,7 +863,12 @@ export default function Agenda({ urlFeed }) {
         </aside>
       </div>
 
-      <PainelSincronizacao urlFeed={urlFeed} />
+      <PainelSincronizacao
+        urlFeed={urlFeed}
+        google={google}
+        retornoGoogle={retornoGoogle}
+        onAtualizar={recarregarTudo}
+      />
 
       {modal && (
         <ModalCompromisso
@@ -816,6 +877,7 @@ export default function Agenda({ urlFeed }) {
           setForm={setForm}
           projetos={projetos}
           compromisso={modal.compromisso}
+          googleAtivo={googleAtivo}
           salvando={salvando}
           excluindo={excluindo}
           erro={erroForm}

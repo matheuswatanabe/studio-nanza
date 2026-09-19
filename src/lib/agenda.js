@@ -102,6 +102,18 @@ export function intervaloDoCompromisso(compromisso) {
   return { diaInteiro: false, inicio, fim };
 }
 
+// Texto que vai no campo de descrição dos calendários externos (.ics e
+// Google Agenda): a descrição em si mais o contexto que só existe no site.
+export function detalhesDoCompromisso(compromisso) {
+  return [
+    compromisso.descricao,
+    compromisso.projeto_nome && `Projeto: ${compromisso.projeto_nome}`,
+    compromisso.criado_por && `Lançado por: ${compromisso.criado_por}`,
+  ]
+    .filter(Boolean)
+    .join("\n\n");
+}
+
 // Link "Adicionar ao Google Agenda" — abre o Google já com o formulário do
 // evento preenchido. É a via instantânea (aparece no celular em segundos),
 // complementar à assinatura do .ics, que o Google atualiza no ritmo dele.

@@ -24,6 +24,9 @@ export async function listarCompromissos({ id, de, ate } = {}) {
       compromissos.criado_por,
       compromissos.criado_em,
       compromissos.atualizado_em,
+      compromissos.google_event_id,
+      compromissos.google_calendar_id,
+      compromissos.google_erro,
       projetos.nome AS projeto_nome
     FROM compromissos
     LEFT JOIN projetos ON projetos.id = compromissos.projeto_id
