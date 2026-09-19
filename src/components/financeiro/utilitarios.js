@@ -18,9 +18,11 @@ export function formatarData(dataISO) {
   return `${dia}/${mes}/${ano}`;
 }
 
-export function hojeISO() {
-  return new Date().toISOString().slice(0, 10);
-}
+// "Hoje" no fuso de Brasília (ver lib/agenda.js). Com toISOString(), que
+// usa UTC, das 21h em diante uma conta que vence hoje já aparecia "Em Atraso".
+import { hojeISO } from "@/lib/agenda";
+
+export { hojeISO };
 
 export const MESES = [
   { valor: "01", label: "Janeiro" },

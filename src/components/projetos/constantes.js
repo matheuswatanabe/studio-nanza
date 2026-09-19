@@ -1,4 +1,5 @@
 import { PERFIS } from "@/lib/auth";
+import { hojeISO } from "@/lib/agenda";
 
 export const STATUS_COLUNAS = ["Briefing", "Em Andamento", "Revisão Externa", "Finalizado"];
 
@@ -48,10 +49,8 @@ export function formatarData(dataISO) {
   return `${dia}/${mes}/${ano}`;
 }
 
-export function hojeISO() {
-  return new Date().toISOString().slice(0, 10);
-}
-
+// "Hoje" no fuso de Brasília (ver lib/agenda.js). Com toISOString(), que
+// usa UTC, das 21h em diante uma entrega de hoje já aparecia como atrasada.
 export function estaAtrasado(projeto) {
   return (
     projeto.prazo_entrega &&

@@ -3,6 +3,7 @@ import { sql, STATUS_PROJETO, TIPOS_SERVICO, resolverOuCriarCliente } from "@/li
 import { perfilAtual } from "@/lib/perfil";
 import { PERFIS } from "@/lib/auth";
 import { listarProjetos } from "@/lib/consultas";
+import { hojeISO } from "@/lib/agenda";
 
 export async function GET() {
   return NextResponse.json(await listarProjetos());
@@ -92,7 +93,9 @@ export async function POST(request) {
     RETURNING *
   `;
 
-  const dataLancamento = valores.dataInicio ?? new Date().toISOString().slice(0, 10);
+  // Data de hoje em Brasília: com toISOString() (UTC), um projeto criado
+  // depois das 21h gerava as contas com a data de amanhã.
+  const dataLancamento = valores.dataInicio ?? hojeISO();
 
   if (valores.valor) {
     await sql`

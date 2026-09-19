@@ -68,6 +68,8 @@ async function buscarSemana() {
 async function buscarResumo() {
   // As consultas não dependem umas das outras, então vão ao banco ao mesmo
   // tempo: a página espera só pela mais lenta, não pela soma de todas.
+  // "Hoje" e "este mês" usam o fuso de Brasília, pelo mesmo motivo explicado
+  // em buscarSemana (CURRENT_DATE é UTC).
   const [
     [{ saldo }],
     [{ receitames: receitaMes }],
@@ -82,13 +84,14 @@ async function buscarResumo() {
     sql`
       SELECT COALESCE(SUM(valor), 0) AS receitaMes
       FROM transacoes
-      WHERE tipo = 'entrada' AND to_char(data, 'YYYY-MM') = to_char(CURRENT_DATE, 'YYYY-MM')
+      WHERE tipo = 'entrada'
+        AND to_char(data, 'YYYY-MM') = to_char(now() AT TIME ZONE 'America/Sao_Paulo', 'YYYY-MM')
     `,
     sql`SELECT COUNT(*) AS totalClientes FROM clientes`,
     sql`SELECT COUNT(*) AS totalProjetosAndamento FROM projetos WHERE status != 'Finalizado'`,
     sql`
       SELECT projetos.*, COALESCE(clientes.empresa, clientes.nome) AS cliente_nome,
-        projetos.prazo_entrega < CURRENT_DATE AS atrasado
+        projetos.prazo_entrega < (now() AT TIME ZONE 'America/Sao_Paulo')::date AS atrasado
       FROM projetos
       JOIN clientes ON clientes.id = projetos.cliente_id
       WHERE projetos.status != 'Finalizado' AND projetos.prazo_entrega IS NOT NULL
