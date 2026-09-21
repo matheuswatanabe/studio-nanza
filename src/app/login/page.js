@@ -49,7 +49,7 @@ function LoginForm() {
       <div className="relative z-10 flex min-h-screen w-full items-center justify-center px-6 py-16">
         <div className="w-full max-w-md">
           <p
-            className="brand-panel-fade flex items-center gap-2.5 font-nunito text-[11px] font-bold uppercase tracking-[0.22em] text-brand-ink/70"
+            className="brand-panel-fade flex items-center gap-2.5 text-[11px] font-medium uppercase tracking-[0.22em] text-brand-preto/65"
             style={{ "--fd": "0ms" }}
           >
             <span className="brasa" aria-hidden>
@@ -59,19 +59,19 @@ function LoginForm() {
           </p>
 
           <h1
-            className="brand-panel-fade mt-7 font-rubik text-[clamp(2rem,7vw,3.1rem)] font-bold uppercase leading-[0.98] tracking-[-0.02em] text-brand-ink"
+            className="brand-panel-fade mt-7 font-display text-[clamp(2.1rem,7vw,3.4rem)] font-semibold leading-[1.02] tracking-[-0.035em] text-brand-preto"
             style={{ "--fd": "80ms" }}
           >
             Where ideas
             <br />
-            become <span className="text-brand-gold">identity</span>
+            become identity
           </h1>
 
           <form onSubmit={handleSubmit} className="mt-12">
             <div className="brand-panel-fade" style={{ "--fd": "180ms" }}>
               <label
                 htmlFor="senha"
-                className="block text-[11px] font-medium uppercase tracking-[0.18em] text-brand-ink/50"
+                className="block text-[11px] font-medium uppercase tracking-[0.18em] text-brand-preto/45"
               >
                 Senha
               </label>
@@ -84,17 +84,17 @@ function LoginForm() {
                   required
                   value={senha}
                   onChange={(e) => setSenha(e.target.value)}
-                  className="peer w-full bg-transparent pb-3 font-rubik text-lg tracking-[0.18em] text-brand-ink outline-none placeholder:tracking-normal placeholder:text-brand-ink/25"
+                  className="peer w-full bg-transparent pb-3 text-lg tracking-[0.18em] text-brand-preto outline-none placeholder:tracking-normal placeholder:text-brand-preto/25"
                   placeholder="••••••••"
                 />
-                {/* A linha do campo acende no mesmo dourado da brasa. */}
+                {/* A linha do campo escurece e engrossa quando ele recebe foco. */}
                 <span
                   aria-hidden
-                  className="absolute inset-x-0 bottom-0 h-px bg-brand-ink/15"
+                  className="absolute inset-x-0 bottom-0 h-px bg-brand-preto/20"
                 />
                 <span
                   aria-hidden
-                  className="absolute inset-x-0 bottom-0 h-[2px] origin-left scale-x-0 bg-brand-gold transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] peer-focus:scale-x-100"
+                  className="absolute inset-x-0 bottom-0 h-[2px] origin-left scale-x-0 bg-brand-preto transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] peer-focus:scale-x-100"
                 />
               </div>
 
@@ -107,7 +107,7 @@ function LoginForm() {
               <button
                 type="submit"
                 disabled={entrando}
-                className="mt-8 w-full rounded-full bg-brand-ink py-3.5 text-sm font-medium tracking-[0.06em] text-brand-paper transition duration-200 hover:bg-brand-ink-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-gold active:translate-y-px disabled:opacity-50"
+                className="mt-8 w-full rounded-full bg-brand-preto py-3.5 text-sm font-medium tracking-[0.06em] text-brand-areia transition duration-200 hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-preto active:translate-y-px disabled:opacity-50"
               >
                 {entrando ? "Entrando..." : "Entrar"}
               </button>
@@ -115,7 +115,7 @@ function LoginForm() {
           </form>
 
           <p
-            className="brand-panel-fade mt-10 text-xs leading-relaxed text-brand-ink/45"
+            className="brand-panel-fade mt-10 text-xs leading-relaxed text-brand-preto/45"
             style={{ "--fd": "280ms" }}
           >
             Acesso restrito à equipe do Studio Nanza.

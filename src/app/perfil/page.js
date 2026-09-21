@@ -36,9 +36,9 @@ function PerfilForm() {
       <div className="brasa-fundo pointer-events-none absolute inset-0" aria-hidden />
 
       <div className="relative z-10 flex min-h-screen w-full items-center justify-center px-6 py-16">
-        <div className="w-full max-w-xl">
+        <div className="w-full max-w-md">
           <p
-            className="brand-panel-fade flex items-center gap-2.5 font-nunito text-[11px] font-bold uppercase tracking-[0.22em] text-brand-ink/70"
+            className="brand-panel-fade flex items-center gap-2.5 text-[11px] font-medium uppercase tracking-[0.22em] text-brand-preto/65"
             style={{ "--fd": "0ms" }}
           >
             <span className="brasa" aria-hidden>
@@ -48,10 +48,10 @@ function PerfilForm() {
           </p>
 
           <h1
-            className="brand-panel-fade mt-7 font-rubik text-[clamp(1.8rem,6vw,2.6rem)] font-bold uppercase leading-[0.98] tracking-[-0.02em] text-brand-ink"
+            className="brand-panel-fade mt-7 font-display text-[clamp(2.1rem,7vw,3.4rem)] font-semibold leading-[1.02] tracking-[-0.035em] text-brand-preto"
             style={{ "--fd": "80ms" }}
           >
-            Quem é <span className="text-brand-gold">você?</span>
+            Quem é você?
           </h1>
 
           <div className="mt-12 grid grid-cols-3 gap-3 sm:gap-5">
@@ -66,23 +66,23 @@ function PerfilForm() {
                   onClick={() => selecionar(perfil)}
                   disabled={selecionando !== null}
                   style={{ "--fd": `${160 + i * 80}ms` }}
-                  className={`brand-panel-fade group flex flex-col items-center gap-4 rounded-2xl py-4 transition duration-300 ease-out focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-gold ${
+                  className={`brand-panel-fade group flex flex-col items-center gap-4 rounded-2xl py-4 transition duration-300 ease-out focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-preto ${
                     outroEscolhido ? "opacity-30" : "hover:-translate-y-1"
                   }`}
                 >
                   {/* Monograma: a inicial do nome, que se inverte ao passar
                       o mouse e fica cheia quando o perfil é escolhido. */}
                   <span
-                    className={`flex h-[4.5rem] w-[4.5rem] items-center justify-center rounded-full border font-rubik text-2xl font-bold transition duration-300 ease-out sm:h-24 sm:w-24 sm:text-3xl ${
+                    className={`flex h-[4.5rem] w-[4.5rem] items-center justify-center rounded-full border font-display text-2xl font-semibold transition duration-300 ease-out sm:h-[5.5rem] sm:w-[5.5rem] sm:text-3xl ${
                       escolhido
-                        ? "border-brand-ink bg-brand-ink text-brand-paper shadow-[0_16px_34px_-18px_rgba(11,42,61,0.65)]"
-                        : "border-brand-ink/20 text-brand-ink group-hover:border-brand-ink group-hover:bg-brand-ink group-hover:text-brand-paper group-hover:shadow-[0_16px_34px_-18px_rgba(11,42,61,0.65)]"
+                        ? "border-brand-preto bg-brand-preto text-brand-areia shadow-[0_16px_34px_-18px_rgba(26,24,21,0.65)]"
+                        : "border-brand-preto/20 text-brand-preto group-hover:border-brand-preto group-hover:bg-brand-preto group-hover:text-brand-areia group-hover:shadow-[0_16px_34px_-18px_rgba(26,24,21,0.65)]"
                     }`}
                   >
                     {perfil.charAt(0)}
                   </span>
 
-                  <span className="text-[11px] font-medium uppercase tracking-[0.16em] text-brand-ink/60 transition-colors duration-300 group-hover:text-brand-ink">
+                  <span className="text-[11px] font-medium uppercase tracking-[0.16em] text-brand-preto/60 transition-colors duration-300 group-hover:text-brand-preto">
                     {escolhido ? "Entrando..." : perfil}
                   </span>
                 </button>
@@ -97,7 +97,7 @@ function PerfilForm() {
           )}
 
           <p
-            className="brand-panel-fade mt-10 text-xs leading-relaxed text-brand-ink/45"
+            className="brand-panel-fade mt-10 text-xs leading-relaxed text-brand-preto/45"
             style={{ "--fd": "420ms" }}
           >
             Cada lançamento fica identificado com o perfil selecionado.

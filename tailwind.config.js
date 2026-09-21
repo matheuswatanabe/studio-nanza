@@ -17,6 +17,9 @@ module.exports = {
           // e com menos brilho, para cansar menos a vista. Fica entre o
           // `paper` e o `paper-dim`, mais quente que os dois.
           areia: "#EDE7DA",
+          // Preto não puro: um pouco mais quente e mais suave que #000,
+          // usado nos textos e no botão das telas de entrada.
+          preto: "#1A1815",
           gold: "#B08D57",
         },
       },
@@ -24,11 +27,10 @@ module.exports = {
         // Neue Montreal é paga e não está no Google Fonts — assim que os
         // arquivos (.woff2) forem adicionados via @font-face em
         // globals.css, o navegador passa a usá-la automaticamente, sem
-        // precisar mexer em nenhuma classe.
-        display: ['"Neue Montreal"', "var(--font-sans)", "sans-serif"],
+        // precisar mexer em nenhuma classe. Até lá vale a Schibsted
+        // Grotesk, a substituta gratuita mais próxima dela.
+        display: ['"Neue Montreal"', "var(--font-grotesk)", "var(--font-sans)", "sans-serif"],
         sans: ["var(--font-sans)", "sans-serif"],
-        rubik: ["var(--font-rubik)", "sans-serif"],
-        nunito: ["var(--font-nunito)", "sans-serif"],
       },
     },
   },
