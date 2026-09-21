@@ -71,7 +71,7 @@ function LoginForm() {
             <div className="brand-panel-fade" style={{ "--fd": "180ms" }}>
               <label
                 htmlFor="senha"
-                className="block text-[11px] font-medium uppercase tracking-[0.18em] text-brand-preto/45"
+                className="block text-[11px] font-medium uppercase tracking-[0.18em] text-brand-preto/65"
               >
                 Senha
               </label>
@@ -104,10 +104,14 @@ function LoginForm() {
                 </p>
               )}
 
+              {/* Pílula justa no computador e largura cheia no celular, onde
+                  o alvo maior ajuda. Altura de 44px nos dois casos — o mínimo
+                  recomendado para toque e clique. A largura mínima evita que
+                  o botão mude de tamanho ao virar "Entrando...". */}
               <button
                 type="submit"
                 disabled={entrando}
-                className="mt-8 w-full rounded-full bg-brand-preto py-3.5 text-sm font-medium tracking-[0.06em] text-brand-areia transition duration-200 hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-preto active:translate-y-px disabled:opacity-50"
+                className="mt-8 w-full min-w-[9.5rem] rounded-full bg-brand-preto px-10 py-3 text-sm font-medium tracking-[0.06em] text-brand-areia transition duration-200 hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-preto active:translate-y-px disabled:opacity-50 sm:w-auto"
               >
                 {entrando ? "Entrando..." : "Entrar"}
               </button>
@@ -115,7 +119,7 @@ function LoginForm() {
           </form>
 
           <p
-            className="brand-panel-fade mt-10 text-xs leading-relaxed text-brand-preto/45"
+            className="brand-panel-fade mt-10 text-xs leading-relaxed text-brand-preto/65"
             style={{ "--fd": "280ms" }}
           >
             Acesso restrito à equipe do Studio Nanza.

@@ -82,7 +82,7 @@ function PerfilForm() {
                     {perfil.charAt(0)}
                   </span>
 
-                  <span className="text-[11px] font-medium uppercase tracking-[0.16em] text-brand-preto/60 transition-colors duration-300 group-hover:text-brand-preto">
+                  <span className="text-[11px] font-medium uppercase tracking-[0.16em] text-brand-preto/65 transition-colors duration-300 group-hover:text-brand-preto">
                     {escolhido ? "Entrando..." : perfil}
                   </span>
                 </button>
@@ -97,7 +97,7 @@ function PerfilForm() {
           )}
 
           <p
-            className="brand-panel-fade mt-10 text-xs leading-relaxed text-brand-preto/45"
+            className="brand-panel-fade mt-10 text-xs leading-relaxed text-brand-preto/65"
             style={{ "--fd": "420ms" }}
           >
             Cada lançamento fica identificado com o perfil selecionado.
