@@ -13,6 +13,10 @@ module.exports = {
           "ink-deep": "#071b28",
           paper: "#F3F4EF",
           "paper-dim": "#E5E3D6",
+          // Fundo das telas de entrada: o papel da marca puxado para o bege
+          // e com menos brilho, para cansar menos a vista. Fica entre o
+          // `paper` e o `paper-dim`, mais quente que os dois.
+          areia: "#EDE7DA",
           gold: "#B08D57",
         },
       },

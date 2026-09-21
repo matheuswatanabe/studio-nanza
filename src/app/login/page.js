@@ -40,7 +40,7 @@ function LoginForm() {
 
   return (
     <div
-      className={`relative min-h-screen w-full overflow-hidden bg-brand-paper transition-all duration-[480ms] ease-[cubic-bezier(0.4,0,0.2,1)] ${
+      className={`relative min-h-screen w-full overflow-hidden bg-brand-areia transition-all duration-[480ms] ease-[cubic-bezier(0.4,0,0.2,1)] ${
         saindo ? "scale-[1.01] opacity-0" : "scale-100 opacity-100"
       }`}
     >

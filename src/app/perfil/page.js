@@ -32,7 +32,7 @@ function PerfilForm() {
   }
 
   return (
-    <div className="relative min-h-screen w-full overflow-hidden bg-brand-paper">
+    <div className="relative min-h-screen w-full overflow-hidden bg-brand-areia">
       <div className="brasa-fundo pointer-events-none absolute inset-0" aria-hidden />
 
       <div className="relative z-10 flex min-h-screen w-full items-center justify-center px-6 py-16">
