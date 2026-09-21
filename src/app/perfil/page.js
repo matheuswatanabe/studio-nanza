@@ -2,18 +2,7 @@
 
 import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import Image from "next/image";
 import { PERFIS } from "@/lib/auth";
-
-// O card do Matheus é rotulado "MATH" no design (apelido/estilo visual),
-// mas o valor salvo continua "Matheus" — mesmos três perfis de sempre,
-// só muda a etiqueta mostrada no card.
-const ROTULO_CARD = { Natan: "NATAN", Lucas: "LUCAS", Matheus: "MATH" };
-const AVATAR_CARD = {
-  Natan: "/images/avatar-natan.jpg",
-  Lucas: "/images/avatar-lucas.jpg",
-  Matheus: "/images/avatar-math.jpg",
-};
 
 function PerfilForm() {
   const router = useRouter();
@@ -43,59 +32,58 @@ function PerfilForm() {
   }
 
   return (
-    <div className="relative min-h-screen w-full overflow-hidden bg-[#242424]">
-      <Image
-        src="/images/selecao-bg.jpg"
-        alt=""
-        fill
-        priority
-        className="object-cover"
-      />
-      <div className="pointer-events-none absolute inset-0 bg-black/25" />
+    <div className="relative min-h-screen w-full overflow-hidden bg-brand-paper">
+      <div className="brasa-fundo pointer-events-none absolute inset-0" aria-hidden />
 
       <div className="relative z-10 flex min-h-screen w-full items-center justify-center px-6 py-16">
-        <div className="brand-card-fade w-full max-w-4xl rounded-[28px] border border-white/15 bg-[#2d4670]/25 p-6 text-center shadow-[0px_40px_80px_-20px_rgba(0,0,0,0.5)] backdrop-blur-sm sm:p-10">
+        <div className="w-full max-w-xl">
           <p
-            className="brand-panel-fade flex items-center justify-center gap-2 font-nunito text-sm font-bold text-white"
+            className="brand-panel-fade flex items-center gap-2.5 font-nunito text-[11px] font-bold uppercase tracking-[0.22em] text-brand-ink/70"
             style={{ "--fd": "0ms" }}
           >
-            <span className="fogo-animado">🔥</span> STUDIO NANZA
+            <span className="brasa" aria-hidden>
+              <span className="text-[15px] leading-none">🔥</span>
+            </span>
+            Studio Nanza
           </p>
 
           <h1
-            className="brand-panel-fade mt-4 font-rubik text-[clamp(1.9rem,6vw,3.5rem)] font-bold uppercase leading-[1.05] tracking-tight text-white"
-            style={{ "--fd": "90ms" }}
+            className="brand-panel-fade mt-7 font-rubik text-[clamp(1.8rem,6vw,2.6rem)] font-bold uppercase leading-[0.98] tracking-[-0.02em] text-brand-ink"
+            style={{ "--fd": "80ms" }}
           >
-            <span className="text-[#ffc928]">Quem é</span> você?
+            Quem é <span className="text-brand-gold">você?</span>
           </h1>
 
-          <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-3">
+          <div className="mt-12 grid grid-cols-3 gap-3 sm:gap-5">
             {PERFIS.map((perfil, i) => {
-              const carregando = selecionando === perfil;
+              const escolhido = selecionando === perfil;
+              const outroEscolhido = selecionando !== null && !escolhido;
+
               return (
                 <button
                   key={perfil}
                   type="button"
                   onClick={() => selecionar(perfil)}
                   disabled={selecionando !== null}
-                  style={{ "--fd": `${180 + i * 70}ms` }}
-                  className="brand-panel-fade group relative flex aspect-[280/419] w-full flex-col overflow-hidden rounded-[20px] border border-white/15 bg-[#506588]/20 shadow-[0px_15px_30px_-10px_rgba(0,0,0,0.4)] transition-all duration-300 ease-out hover:-translate-y-2 hover:scale-[1.03] hover:border-[#ffc928]/70 hover:shadow-[0px_25px_45px_-10px_rgba(0,0,0,0.55)] disabled:pointer-events-none disabled:opacity-50 disabled:hover:translate-y-0 disabled:hover:scale-100"
+                  style={{ "--fd": `${160 + i * 80}ms` }}
+                  className={`brand-panel-fade group flex flex-col items-center gap-4 rounded-2xl py-4 transition duration-300 ease-out focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-gold ${
+                    outroEscolhido ? "opacity-30" : "hover:-translate-y-1"
+                  }`}
                 >
-                  <span className="relative z-10 py-3 font-rubik text-lg font-bold uppercase tracking-tight text-white transition-colors group-hover:text-[#ffc928]">
-                    {carregando ? "Entrando..." : ROTULO_CARD[perfil] ?? perfil}
+                  {/* Monograma: a inicial do nome, que se inverte ao passar
+                      o mouse e fica cheia quando o perfil é escolhido. */}
+                  <span
+                    className={`flex h-[4.5rem] w-[4.5rem] items-center justify-center rounded-full border font-rubik text-2xl font-bold transition duration-300 ease-out sm:h-24 sm:w-24 sm:text-3xl ${
+                      escolhido
+                        ? "border-brand-ink bg-brand-ink text-brand-paper shadow-[0_16px_34px_-18px_rgba(11,42,61,0.65)]"
+                        : "border-brand-ink/20 text-brand-ink group-hover:border-brand-ink group-hover:bg-brand-ink group-hover:text-brand-paper group-hover:shadow-[0_16px_34px_-18px_rgba(11,42,61,0.65)]"
+                    }`}
+                  >
+                    {perfil.charAt(0)}
                   </span>
-                  <span className="relative flex-1 overflow-hidden rounded-b-[20px]">
-                    <Image
-                      src={AVATAR_CARD[perfil]}
-                      alt={perfil}
-                      fill
-                      // O card tem no máximo ~260px de largura (3 colunas);
-                      // no celular vira 1 coluna. Sem isto o Next assume
-                      // tela cheia e o navegador baixa a foto em 1920px.
-                      sizes="(min-width: 640px) 260px, 100vw"
-                      className="object-cover transition-transform duration-300 ease-out group-hover:scale-110"
-                    />
-                    <span className="pointer-events-none absolute inset-0 rounded-b-[20px] ring-0 ring-[#ffc928] transition-all duration-300 group-hover:ring-4" />
+
+                  <span className="text-[11px] font-medium uppercase tracking-[0.16em] text-brand-ink/60 transition-colors duration-300 group-hover:text-brand-ink">
+                    {escolhido ? "Entrando..." : perfil}
                   </span>
                 </button>
               );
@@ -103,14 +91,14 @@ function PerfilForm() {
           </div>
 
           {erro && (
-            <p className="mt-5 text-sm text-red-300" role="alert">
+            <p className="mt-6 text-sm text-[#9b3b2e]" role="alert">
               {erro}
             </p>
           )}
 
           <p
-            className="brand-panel-fade mx-auto mt-8 max-w-sm font-nunito text-sm font-bold text-[#f7faff]"
-            style={{ "--fd": "380ms" }}
+            className="brand-panel-fade mt-10 text-xs leading-relaxed text-brand-ink/45"
+            style={{ "--fd": "420ms" }}
           >
             Cada lançamento fica identificado com o perfil selecionado.
           </p>

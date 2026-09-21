@@ -2,7 +2,6 @@
 
 import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import Image from "next/image";
 
 function LoginForm() {
   const router = useRouter();
@@ -36,80 +35,88 @@ function LoginForm() {
     setTimeout(() => {
       router.replace(searchParams.get("redirect") || "/");
       router.refresh();
-    }, 550);
+    }, 480);
   }
 
   return (
     <div
-      className={`relative min-h-screen w-full overflow-hidden bg-[#242424] transition-all duration-[550ms] ease-[cubic-bezier(0.4,0,0.2,1)] ${
-        saindo ? "scale-[1.015] opacity-0" : "scale-100 opacity-100"
+      className={`relative min-h-screen w-full overflow-hidden bg-brand-paper transition-all duration-[480ms] ease-[cubic-bezier(0.4,0,0.2,1)] ${
+        saindo ? "scale-[1.01] opacity-0" : "scale-100 opacity-100"
       }`}
     >
-      <Image
-        src="/images/login-bg.jpg"
-        alt=""
-        fill
-        priority
-        className="object-cover"
-      />
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+      <div className="brasa-fundo pointer-events-none absolute inset-0" aria-hidden />
 
-      <div className="relative z-10 flex min-h-screen w-full items-center justify-center px-4 py-16 sm:px-6">
-        <div className="w-full max-w-2xl text-center">
+      <div className="relative z-10 flex min-h-screen w-full items-center justify-center px-6 py-16">
+        <div className="w-full max-w-md">
           <p
-            className="brand-panel-fade flex items-center justify-center gap-2 font-nunito text-sm font-bold text-white"
+            className="brand-panel-fade flex items-center gap-2.5 font-nunito text-[11px] font-bold uppercase tracking-[0.22em] text-brand-ink/70"
             style={{ "--fd": "0ms" }}
           >
-            <span className="fogo-animado">🔥</span> STUDIO NANZA
+            <span className="brasa" aria-hidden>
+              <span className="text-[15px] leading-none">🔥</span>
+            </span>
+            Studio Nanza
           </p>
 
           <h1
-            className="brand-panel-fade mt-5 font-rubik text-[clamp(2.1rem,8vw,4.5rem)] font-bold uppercase leading-[1.05] tracking-tight text-white"
-            style={{ "--fd": "90ms" }}
+            className="brand-panel-fade mt-7 font-rubik text-[clamp(2rem,7vw,3.1rem)] font-bold uppercase leading-[0.98] tracking-[-0.02em] text-brand-ink"
+            style={{ "--fd": "80ms" }}
           >
-            <span className="block whitespace-nowrap">Where ideas</span>
-            <span className="block whitespace-nowrap text-[#ffc928]">
-              become identity
-              <span className="ml-2 inline-block h-[0.2em] w-[0.2em] rounded-full bg-[#f7faff] align-baseline" />
-            </span>
+            Where ideas
+            <br />
+            become <span className="text-brand-gold">identity</span>
           </h1>
 
-          <form
-            onSubmit={handleSubmit}
-            className="brand-card-fade mx-auto mt-10 w-full max-w-[300px] rounded-[20px] border border-white/25 bg-[#506588]/25 p-4 text-left shadow-[0px_26px_46px_-10px_rgba(0,0,0,0.35)] backdrop-blur-sm"
-            style={{ "--fd": "220ms" }}
-          >
-            <label className="block font-rubik text-sm font-medium tracking-[0.02em] text-white">
-              Senha
-            </label>
-            <input
-              type="password"
-              placeholder="Sua senha"
-              autoFocus
-              required
-              value={senha}
-              onChange={(e) => setSenha(e.target.value)}
-              className="mt-2 w-full rounded-[14px] bg-[#344e68] px-4 py-2.5 font-nunito text-sm font-bold uppercase text-white shadow-[0px_4px_0px_0px_#52677c] outline-none placeholder:text-[#8095aa]"
-            />
+          <form onSubmit={handleSubmit} className="mt-12">
+            <div className="brand-panel-fade" style={{ "--fd": "180ms" }}>
+              <label
+                htmlFor="senha"
+                className="block text-[11px] font-medium uppercase tracking-[0.18em] text-brand-ink/50"
+              >
+                Senha
+              </label>
 
-            {erro && (
-              <p className="mt-3 text-sm text-red-300" role="alert">
-                {erro}
-              </p>
-            )}
+              <div className="relative mt-3">
+                <input
+                  id="senha"
+                  type="password"
+                  autoFocus
+                  required
+                  value={senha}
+                  onChange={(e) => setSenha(e.target.value)}
+                  className="peer w-full bg-transparent pb-3 font-rubik text-lg tracking-[0.18em] text-brand-ink outline-none placeholder:tracking-normal placeholder:text-brand-ink/25"
+                  placeholder="••••••••"
+                />
+                {/* A linha do campo acende no mesmo dourado da brasa. */}
+                <span
+                  aria-hidden
+                  className="absolute inset-x-0 bottom-0 h-px bg-brand-ink/15"
+                />
+                <span
+                  aria-hidden
+                  className="absolute inset-x-0 bottom-0 h-[2px] origin-left scale-x-0 bg-brand-gold transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] peer-focus:scale-x-100"
+                />
+              </div>
 
-            <button
-              type="submit"
-              disabled={entrando}
-              className="mt-5 w-full rounded-[14px] bg-[#ffc928] py-2.5 font-nunito text-sm font-black uppercase text-[#242424] shadow-[0px_4px_0px_0px_#ad5800] transition duration-100 active:translate-y-1 active:shadow-none disabled:opacity-60 disabled:active:translate-y-0 disabled:active:shadow-[0px_4px_0px_0px_#ad5800]"
-            >
-              {entrando ? "Entrando..." : "Entrar"}
-            </button>
+              {erro && (
+                <p className="mt-3 text-sm text-[#9b3b2e]" role="alert">
+                  {erro}
+                </p>
+              )}
+
+              <button
+                type="submit"
+                disabled={entrando}
+                className="mt-8 w-full rounded-full bg-brand-ink py-3.5 text-sm font-medium tracking-[0.06em] text-brand-paper transition duration-200 hover:bg-brand-ink-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-gold active:translate-y-px disabled:opacity-50"
+              >
+                {entrando ? "Entrando..." : "Entrar"}
+              </button>
+            </div>
           </form>
 
           <p
-            className="brand-panel-fade mx-auto mt-6 max-w-[220px] text-center font-nunito text-sm font-bold text-[#f7faff]"
-            style={{ "--fd": "320ms" }}
+            className="brand-panel-fade mt-10 text-xs leading-relaxed text-brand-ink/45"
+            style={{ "--fd": "280ms" }}
           >
             Acesso restrito à equipe do Studio Nanza.
           </p>

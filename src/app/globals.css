@@ -26,10 +26,13 @@ body {
 }
 */
 
-/* Entrada de texto/card: são animações curtas e de uma vez só (não
-   ficam em loop), então tocam sempre — inclusive para quem tem
-   "reduzir movimento" ativado no sistema, já que esse tipo de fade
-   pontual não costuma ser o gatilho que essa preferência visa evitar. */
+/* ------------------------------------------------------------------ */
+/* Entrada de tela                                                     */
+/* Animações curtas e de uma vez só (não ficam em loop), então tocam   */
+/* sempre — inclusive para quem tem "reduzir movimento" ativado, já    */
+/* que esse tipo de fade pontual não costuma ser o gatilho que essa    */
+/* preferência visa evitar.                                            */
+/* ------------------------------------------------------------------ */
 .brand-panel-fade {
   opacity: 0;
   transform: translateY(14px);
@@ -42,16 +45,6 @@ body {
   transform: translateY(20px) scale(0.96);
   animation: brand-card-in 650ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
   animation-delay: var(--fd, 0ms);
-}
-
-/* Já o "fogo" é um loop contínuo — esse sim respeita reduzir
-   movimento, como recomendado para animações que não têm fim. */
-@media (prefers-reduced-motion: no-preference) {
-  .fogo-animado {
-    display: inline-block;
-    transform-origin: 50% 95%;
-    animation: fogo-flicker 1.8s ease-in-out infinite;
-  }
 }
 
 @keyframes brand-panel-in {
@@ -68,41 +61,91 @@ body {
   }
 }
 
-@keyframes fogo-flicker {
-  0% {
-    transform: scaleX(1) scaleY(1) rotate(-3deg);
-    filter: brightness(1);
+/* ------------------------------------------------------------------ */
+/* A brasa                                                             */
+/* O único elemento decorativo das telas de entrada: o fogo com um     */
+/* halo quente que respira, o mesmo calor num brilho difuso no alto da */
+/* página e na linha do campo em foco. Por serem animações contínuas,  */
+/* respeitam "reduzir movimento" — sem ela, ficam paradas, mas o halo  */
+/* e o brilho continuam visíveis.                                      */
+/* ------------------------------------------------------------------ */
+.brasa {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.brasa::before {
+  content: "";
+  position: absolute;
+  inset: -0.85em;
+  border-radius: 9999px;
+  background: radial-gradient(
+    closest-side,
+    rgba(176, 141, 87, 0.42),
+    rgba(176, 141, 87, 0)
+  );
+  opacity: 0.7;
+}
+
+.brasa > span {
+  position: relative;
+  transform-origin: 50% 90%;
+}
+
+/* Brilho difuso no alto da página, na mesma temperatura da brasa. */
+.brasa-fundo {
+  background:
+    radial-gradient(60rem 32rem at 50% -8rem, rgba(176, 141, 87, 0.16), transparent 70%),
+    radial-gradient(40rem 26rem at 50% 120%, rgba(11, 42, 61, 0.05), transparent 70%);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .brasa::before {
+    animation: brasa-respira 2.9s ease-in-out infinite;
   }
-  12% {
-    transform: scaleX(0.94) scaleY(1.08) rotate(2deg);
-    filter: brightness(1.1);
+
+  .brasa > span {
+    animation: brasa-tremula 2.9s ease-in-out infinite;
   }
-  24% {
-    transform: scaleX(1.05) scaleY(0.95) rotate(-4deg);
-    filter: brightness(0.94);
+
+  .brasa-fundo {
+    animation: brasa-fundo-respira 9s ease-in-out infinite;
   }
-  38% {
-    transform: scaleX(0.96) scaleY(1.1) rotate(4deg);
-    filter: brightness(1.15);
+}
+
+@keyframes brasa-respira {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.55;
   }
   50% {
-    transform: scaleX(1.03) scaleY(0.96) rotate(-2deg);
-    filter: brightness(0.97);
+    transform: scale(1.14);
+    opacity: 0.95;
   }
-  63% {
-    transform: scaleX(0.95) scaleY(1.06) rotate(3deg);
-    filter: brightness(1.08);
-  }
-  76% {
-    transform: scaleX(1.04) scaleY(0.97) rotate(-3deg);
-    filter: brightness(0.95);
-  }
-  88% {
-    transform: scaleX(0.97) scaleY(1.05) rotate(2deg);
-    filter: brightness(1.06);
-  }
+}
+
+@keyframes brasa-tremula {
+  0%,
   100% {
-    transform: scaleX(1) scaleY(1) rotate(-3deg);
-    filter: brightness(1);
+    transform: scale(1) rotate(-1.5deg);
+  }
+  35% {
+    transform: scale(1.06) rotate(1.5deg);
+  }
+  65% {
+    transform: scale(0.97) rotate(-1deg);
+  }
+}
+
+@keyframes brasa-fundo-respira {
+  0%,
+  100% {
+    opacity: 0.85;
+  }
+  50% {
+    opacity: 1;
   }
 }
